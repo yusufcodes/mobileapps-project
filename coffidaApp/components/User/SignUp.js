@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, StyleSheet, ToastAndroid, Keyboard} from 'react-native';
 import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
+import showToast from '../../functions/showToast';
 
 const axios = require('axios');
 
@@ -11,15 +12,6 @@ export default function SignUp({navigation}) {
   const [password, setPassword] = React.useState('');
   const [accountCreated, setAccountCreated] = React.useState(false);
 
-  const showToastWithGravityAndOffset = (text) => {
-    ToastAndroid.showWithGravityAndOffset(
-      text,
-      ToastAndroid.LONG,
-      ToastAndroid.BOTTOM,
-      25,
-      50,
-    );
-  };
   const createUser = async () => {
     Keyboard.dismiss();
     const response = await axios
@@ -39,7 +31,7 @@ export default function SignUp({navigation}) {
           // },
           if (response.status === 201) {
             // Display Toast to the user
-            showToastWithGravityAndOffset(
+            showToast(
               `${firstName}, your account has successfully been created!`,
             );
             setAccountCreated(true);
@@ -102,7 +94,7 @@ export default function SignUp({navigation}) {
         mode="outlined"
         onPress={() => {
           console.log('Login: pressed');
-          navigation.navigate('Login');
+          navigation.navigate('Log In');
         }}>
         Login
       </Button>
