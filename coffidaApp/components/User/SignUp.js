@@ -87,7 +87,12 @@ export default function SignUp({navigation}) {
         onPress={() => createUser()}>
         Sign up
       </Button>
-      <Subheading>Already have an account? Login ⬇️</Subheading>
+      <Subheading
+        style={{
+          textAlign: 'center',
+        }}>
+        Already have an account?
+      </Subheading>
       <Button
         uppercase
         accessibilityLabel="Login to existing account"

@@ -1,6 +1,8 @@
-const getData = async (key) => {
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const getData = async () => {
   try {
-    const value = await AsyncStorage.getItem(`@${key}`);
+    const value = await AsyncStorage.getItem('@token');
     if (value !== null) {
       return value;
     }

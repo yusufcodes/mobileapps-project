@@ -6,7 +6,7 @@ import storeData from '../../functions/storeData';
 
 const axios = require('axios');
 
-export default function Login() {
+export default function Login({navigation}) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [loggedIn, setLoggedIn] = React.useState(false);
@@ -28,9 +28,11 @@ export default function Login() {
         (response) => {
           if (response.status === 200) {
             console.log('login: Login Successful');
+            console.log(response.data.token);
             storeData('token', response.data.token);
             showToast('Login Successful!');
             setLoggedIn(true);
+            navigation.navigate('Landing');
           }
         },
         (error) => {

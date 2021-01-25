@@ -4,7 +4,7 @@ const storeData = async (name, value) => {
   try {
     await AsyncStorage.setItem(`@${name}`, value);
   } catch (e) {
-    console.log(e);
+    console.log(`function: storeData - Error: ${e}`);
   }
 };
 
