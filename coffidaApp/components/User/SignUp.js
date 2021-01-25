@@ -1,11 +1,29 @@
-import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import React, {useEffect} from 'react';
+import {View, StyleSheet} from 'react-native';
 import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
+
+const axios = require('axios');
 
 export default function SignUp() {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+
+  useEffect(() => {
+    axios
+      .get('http://10.0.2.2:3333/api/1.0.0/user/9')
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        // handle error
+        console.log(error);
+      });
+
+    return () => {
+      // cleanup
+    };
+  });
 
   const styles = StyleSheet.create({
     container: {
