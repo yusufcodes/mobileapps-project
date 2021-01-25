@@ -1,32 +1,55 @@
-/* eslint-disable react/prop-types */
-import React, {useEffect} from 'react';
-import {View, StyleSheet} from 'react-native';
+import React from 'react';
+import {View, StyleSheet, ToastAndroid, Keyboard} from 'react-native';
 import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
 
 const axios = require('axios');
 
 export default function SignUp({navigation}) {
-  const [name, setName] = React.useState('');
+  const [firstName, setFirstName] = React.useState('');
+  const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [accountCreated, setAccountCreated] = React.useState(false);
 
-  useEffect(() => {
-    axios
-      .get('http://10.0.2.2:3333/api/1.0.0/user/9')
-      .then((response) => {
-        console.log(response);
+  const showToastWithGravityAndOffset = (text) => {
+    ToastAndroid.showWithGravityAndOffset(
+      text,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50,
+    );
+  };
+  const createUser = async () => {
+    Keyboard.dismiss();
+    const response = await axios
+      .post('http://10.0.2.2:3333/api/1.0.0/user', {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password,
       })
-      .catch((error) => {
-        // handle error
-        console.log(error);
-      });
-
-    return () => {
-      // cleanup
-    };
-  });
+      .then(
+        (response) => {
+          //   console.log(response.data); // {"id": 24}
+          //   console.log(response.status); // 201
+          //   console.log(response.statusText);
+          //   console.log(response.headers);
+          //   console.log(response.config);
+          // },
+          if (response.status === 201) {
+            // Display Toast to the user
+            showToastWithGravityAndOffset(
+              `${firstName}, your account has successfully been created!`,
+            );
+            setAccountCreated(true);
+          }
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -41,10 +64,16 @@ export default function SignUp({navigation}) {
         Sign up for an account to begin using the Coffida app 👋
       </Subheading>
       <TextInput
-        label="Name"
-        value={name}
+        label="First Name"
+        value={firstName}
         mode="outlined"
-        onChangeText={(name) => setName(name)}
+        onChangeText={(firstName) => setFirstName(firstName)}
+      />
+      <TextInput
+        label="Last Name"
+        value={lastName}
+        mode="outlined"
+        onChangeText={(lastName) => setLastName(lastName)}
       />
       <TextInput
         label="Email"
@@ -63,9 +92,7 @@ export default function SignUp({navigation}) {
         uppercase
         accessibilityLabel="Sign up for an account"
         mode="outlined"
-        onPress={() => {
-          console.log('Sign up: pressed');
-        }}>
+        onPress={() => createUser()}>
         Sign up
       </Button>
       <Subheading>Already have an account? Login ⬇️</Subheading>

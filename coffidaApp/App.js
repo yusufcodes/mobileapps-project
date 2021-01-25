@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import 'react-native-gesture-handler';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
@@ -19,7 +18,6 @@ import Login from './components/User/Login';
 const styles = StyleSheet.create({});
 const Stack = createStackNavigator();
 
-// eslint-disable-next-line react/prop-types
 const App = () => (
   <PaperProvider>
     <NavigationContainer>
