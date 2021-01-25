@@ -1,10 +1,13 @@
+/* eslint-disable react/prop-types */
 import React, {useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
 
 const axios = require('axios');
 
-export default function SignUp() {
+export default function SignUp({navigation}) {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -72,6 +75,7 @@ export default function SignUp() {
         mode="outlined"
         onPress={() => {
           console.log('Login: pressed');
+          navigation.navigate('Login');
         }}>
         Login
       </Button>
