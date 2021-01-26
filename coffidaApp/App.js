@@ -28,11 +28,10 @@ const App = () => (
         <Stack.Screen name="Sign Up" component={SignUp} />
         <Stack.Screen name="Log In" component={Login} />
         <Stack.Screen name="Landing" component={Landing} />
-
+        <Stack.Screen name="AllShops" component={AllShops} />
         <Stack.Screen name="Shop" component={Shop} />
       </Stack.Navigator>
     </NavigationContainer>
-    {/* <Stack.Screen name="AllShops" component={AllShops} /> */}
   </PaperProvider>
 );
 

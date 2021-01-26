@@ -4,11 +4,11 @@ import getToken from '../functions/getToken';
 import AllShops from './CoffeeShop/AllShops';
 import Search from './CoffeeShop/Search';
 
-export default function Landing() {
+export default function Landing({navigation}) {
   return (
     <View>
       <Search />
-      <AllShops />
+      <AllShops navigation={navigation} />
     </View>
   );
 }
