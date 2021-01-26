@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text} from 'react-native';
-import {List} from 'react-native-paper';
-
+import {List, ActivityIndicator, Colors} from 'react-native-paper';
 import getToken from '../../functions/getToken';
 
 const axios = require('axios');
@@ -34,6 +33,7 @@ export default function AllShops({navigation}) {
           town: item.location_town,
           rating: item.avg_overall_rating,
         }));
+        console.log('Got shops');
         setShops(arrayOfShops);
       } catch (error) {
         console.log(error);
@@ -44,17 +44,22 @@ export default function AllShops({navigation}) {
     response();
   }, []);
 
-  return (
-    <View>
-      {shops?.map((item, index) => (
-        <List.Item
-          key={index}
-          title={`${item.name}`}
-          description={`Town: ${item.town} \nRating: ${item.rating}`}
-          descriptionNumberOfLines={2}
-          left={(props) => <List.Icon {...props} icon="coffee" />}
-        />
-      ))}
-    </View>
+  let listOfShops = (
+    <ActivityIndicator animating size="large" color={Colors.red800} />
   );
+
+  if (shops.length > 0) {
+    listOfShops = shops?.map((item, index) => (
+      <List.Item
+        key={index}
+        title={`${item.name}`}
+        description={`Town: ${item.town} \nRating: ${item.rating}`}
+        descriptionNumberOfLines={2}
+        left={(props) => <List.Icon {...props} icon="coffee" />}
+        onPress={() => navigation.navigate('Shop', {id: item.id})}
+      />
+    ));
+  }
+
+  return <View>{listOfShops}</View>;
 }

@@ -15,6 +15,8 @@ import {Provider as PaperProvider} from 'react-native-paper';
 import SignUp from './components/User/SignUp';
 import Login from './components/User/Login';
 import Landing from './components/Landing';
+import Shop from './components/CoffeeShop/Shop';
+import AllShops from './components/CoffeeShop/AllShops';
 
 const styles = StyleSheet.create({});
 const Stack = createStackNavigator();
@@ -26,8 +28,11 @@ const App = () => (
         <Stack.Screen name="Sign Up" component={SignUp} />
         <Stack.Screen name="Log In" component={Login} />
         <Stack.Screen name="Landing" component={Landing} />
+
+        <Stack.Screen name="Shop" component={Shop} />
       </Stack.Navigator>
     </NavigationContainer>
+    {/* <Stack.Screen name="AllShops" component={AllShops} /> */}
   </PaperProvider>
 );
 
