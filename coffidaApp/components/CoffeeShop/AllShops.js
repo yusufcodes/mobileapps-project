@@ -1,24 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import {List, ActivityIndicator, Colors} from 'react-native-paper';
 import getToken from '../../functions/getToken';
 
 const axios = require('axios');
 
 export default function AllShops({navigation}) {
-  // Storing token in state to be referenced later
-  const [token, setToken] = useState('');
-  // Storing details of each shop to output to the user
   const [shops, setShops] = useState([]);
 
   useEffect(() => {
-    // Assigning token value to state once the Promise from 'value' is resolved
-    const setTokenState = async () => {
-      const value = await getToken();
-      setToken(value);
-    };
-
     async function response() {
+      const token = await getToken();
       try {
         const response = await axios({
           method: 'get',
@@ -40,7 +32,6 @@ export default function AllShops({navigation}) {
       }
     }
 
-    setTokenState();
     response();
   }, []);
 

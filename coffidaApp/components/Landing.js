@@ -1,6 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text} from 'react-native';
-import getToken from '../functions/getToken';
+import React from 'react';
+import {View} from 'react-native';
 import AllShops from './CoffeeShop/AllShops';
 import Search from './CoffeeShop/Search';
 
