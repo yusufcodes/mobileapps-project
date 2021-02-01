@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import {List, ActivityIndicator, Colors} from 'react-native-paper';
 import getToken from '../../functions/getToken';
+import Search from './Search';
 
 const axios = require('axios');
 
@@ -53,5 +54,10 @@ export default function AllShops({navigation}) {
     ));
   }
 
-  return <View>{listOfShops}</View>;
+  return (
+    <View>
+      <Search />
+      {listOfShops}
+    </View>
+  );
 }
