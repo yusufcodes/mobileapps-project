@@ -32,7 +32,7 @@ export default function Login({navigation}) {
             storeData('token', response.data.token);
             showToast('Login Successful!');
             setLoggedIn(true);
-            navigation.navigate('Landing');
+            navigation.navigate('Main');
           }
         },
         (error) => {
@@ -64,15 +64,10 @@ export default function Login({navigation}) {
       <Button
         uppercase
         accessibilityLabel="Log in to an existing account"
-        mode="outlined"
+        mode="contained"
         onPress={() => login()}>
         Log In
       </Button>
-      {loggedIn ? (
-        <Subheading>
-          Login successful - ready to move into the main app!
-        </Subheading>
-      ) : null}
     </View>
   );
 }
