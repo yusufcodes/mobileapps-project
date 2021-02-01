@@ -18,17 +18,18 @@ export default function AllShops({navigation}) {
           responseType: 'json',
           headers: {'X-Authorization': token},
         });
-        console.log(response.data.location_id);
+        console.log(response.data.location_reviews);
 
         const arrayOfShops = response.data.map((item, index) => ({
           id: item.location_id,
           name: item.location_name,
           town: item.location_town,
           rating: item.avg_overall_rating,
+          reviews: item.location_reviews,
         }));
-        console.log('Got shops');
+        console.log('AllShops: Got shops');
         setShops(arrayOfShops);
-        console.log(arrayOfShops);
+        // console.log(arrayOfShops);
       } catch (error) {
         console.log(error);
       }
