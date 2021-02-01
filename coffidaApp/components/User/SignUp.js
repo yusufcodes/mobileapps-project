@@ -83,7 +83,7 @@ export default function SignUp({navigation}) {
       <Button
         uppercase
         accessibilityLabel="Sign up for an account"
-        mode="outlined"
+        mode="contained"
         onPress={() => createUser()}>
         Sign up
       </Button>
@@ -96,7 +96,7 @@ export default function SignUp({navigation}) {
       <Button
         uppercase
         accessibilityLabel="Login to existing account"
-        mode="outlined"
+        mode="contained"
         onPress={() => {
           console.log('Login: pressed');
           navigation.navigate('Log In');
