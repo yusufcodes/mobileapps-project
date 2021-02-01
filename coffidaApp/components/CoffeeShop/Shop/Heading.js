@@ -11,6 +11,7 @@ import {
   Divider,
 } from 'react-native-paper';
 // import Button from '../../Global/Button';
+import LikeButton from '../../Global/LikeButton';
 
 export default function Heading({details}) {
   const {
@@ -72,12 +73,7 @@ export default function Heading({details}) {
 
       <View style={styles.ratingsContainer}>
         <View style={styles.ratingIcon}>
-          <IconButton
-            icon="heart"
-            color={Colors.red500}
-            size={30}
-            onPress={() => handleFavourite()}
-          />
+          <LikeButton handler={handleFavourite} />
         </View>
 
         <View style={styles.ratings}>
