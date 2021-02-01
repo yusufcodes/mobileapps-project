@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Image} from 'react-native';
+import {View, Text, Image, ScrollView} from 'react-native';
 import {ActivityIndicator, Colors} from 'react-native-paper';
 import getToken from '../../functions/getToken';
+import Heading from './Shop/Heading';
 
 const axios = require('axios');
 
@@ -19,7 +20,6 @@ export default function Shop({route}) {
           responseType: 'json',
           headers: {'X-Authorization': token},
         });
-        // console.log(response.data);
 
         const {
           location_name: name,
@@ -58,21 +58,9 @@ export default function Shop({route}) {
   if (shop) {
     renderShop = (
       <View>
-        <Text>{shop.name}</Text>
+        <Heading details={shop} />
       </View>
     );
   }
-  return (
-    <View>
-      {renderShop}
-      {/* Hero Image
-      - Basic location information */}
-      {/*  Button: Add Review */}
-      {/* <Image source={{uri: `${shop.photo_path}`}} /> */}
-
-      {/* Reviews Section
-      Overall Rating
-      List of all reviews  */}
-    </View>
-  );
+  return <View>{renderShop}</View>;
 }
