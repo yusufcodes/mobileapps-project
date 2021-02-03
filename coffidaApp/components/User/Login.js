@@ -9,7 +9,6 @@ const axios = require('axios');
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
-  const [loggedIn, setLoggedIn] = React.useState(false);
 
   const styles = StyleSheet.create({
     container: {
@@ -27,11 +26,9 @@ export default function Login({navigation}) {
       .then(
         (response) => {
           if (response.status === 200) {
-            console.log('login: Login Successful');
-            console.log(response.data.token);
             storeData('token', response.data.token);
+            storeData('id', response.data.id.toString());
             showToast('Login Successful!');
-            setLoggedIn(true);
             navigation.navigate('Main');
           }
         },
