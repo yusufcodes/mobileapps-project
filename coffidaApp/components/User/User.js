@@ -20,12 +20,12 @@ const styles = StyleSheet.create({
 });
 
 export default function User({navigation}) {
-  const [details, setDetails] = useState([]);
+  const [details, setDetails] = useState({});
   const [locations, setLocations] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [likedReviews, setLikedReviews] = useState([]);
 
-  const displayUpdate = () => navigation.navigate('Update');
+  const displayUpdate = () => navigation.navigate('Update', {details});
   useEffect(() => {
     async function response() {
       const token = await getToken();
@@ -45,7 +45,7 @@ export default function User({navigation}) {
           liked_reviews,
           reviews,
         } = response.data;
-        setDetails([email, first_name, last_name]);
+        setDetails({email: email, firstName: first_name, lastName: last_name});
         setLocations(favourite_locations);
         setReviews(reviews);
         setLikedReviews(liked_reviews);
