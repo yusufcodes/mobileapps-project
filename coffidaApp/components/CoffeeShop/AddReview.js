@@ -1,7 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, Keyboard} from 'react-native';
 import {Title, TextInput, IconButton} from 'react-native-paper';
 import Star from '../Global/Star';
+import Button from '../Global/Button';
+import showToast from '../../functions/showToast';
+import getToken from '../../functions/getToken';
 
 const styles = StyleSheet.create({
   root: {
@@ -14,7 +17,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function AddReview() {
+const axios = require('axios');
+
+export default function AddReview({route, navigation}) {
+  const {id} = route.params;
+  console.log(id);
+
   const [overall, setOverall] = useState(0);
   const [price, setPrice] = useState(0);
   const [quality, setQuality] = useState(0);
@@ -25,6 +33,38 @@ export default function AddReview() {
   const handlePrice = (rating) => setPrice(rating);
   const handleQuality = (rating) => setQuality(rating);
   const handleClean = (rating) => setClean(rating);
+
+  const submitReview = async () => {
+    console.log('Submitting Review...');
+    Keyboard.dismiss();
+    const token = await getToken();
+
+    const response = await axios({
+      method: 'post',
+      url: `http://10.0.2.2:3333/api/1.0.0/location/${id}/review`,
+      responseType: 'json',
+      headers: {'X-Authorization': token},
+      data: {
+        overall_rating: overall,
+        price_rating: price,
+        quality_rating: quality,
+        clenliness_rating: clean,
+        review_body: review,
+      },
+    }).then(
+      (response) => {
+        if (response.status === 201) {
+          showToast('Review submitted!');
+          console.log('Review submitted!');
+          navigation.goBack();
+        }
+      },
+      (error) => {
+        showToast('Error submitting review...');
+        console.log(error);
+      },
+    );
+  };
   return (
     <View style={styles.root}>
       <Title>Add Review</Title>
@@ -70,6 +110,7 @@ export default function AddReview() {
         value={review}
         onChangeText={(review) => setReview(review)}
       />
+      <Button text="Submit Review" handler={submitReview} />
     </View>
   );
 }
