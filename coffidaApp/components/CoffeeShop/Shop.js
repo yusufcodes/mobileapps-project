@@ -13,7 +13,7 @@ import LikeButton from '../Global/LikeButton';
 
 const axios = require('axios');
 
-export default function Shop({route}) {
+export default function Shop({route, navigation}) {
   const {id} = route.params;
   const [shop, setShop] = useState();
 
@@ -79,7 +79,7 @@ export default function Shop({route}) {
   if (shop) {
     renderShop = (
       <ScrollView style={styles.root}>
-        <Heading details={shop} />
+        <Heading details={shop} navigation={navigation} />
         <Title
           style={{
             marginLeft: 20,

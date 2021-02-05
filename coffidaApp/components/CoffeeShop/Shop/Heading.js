@@ -1,19 +1,10 @@
 import React from 'react';
-import {View, ScrollView, Text, StyleSheet} from 'react-native';
-import {
-  Title,
-  Headline,
-  Subheading,
-  Button,
-  IconButton,
-  Colors,
-  Paragraph,
-  Divider,
-} from 'react-native-paper';
-// import Button from '../../Global/Button';
+import {View, StyleSheet} from 'react-native';
+import {Title, Subheading, Paragraph} from 'react-native-paper';
 import LikeButton from '../../Global/LikeButton';
+import Button from '../../Global/Button';
 
-export default function Heading({details}) {
+export default function Heading({details, navigation}) {
   const {
     name,
     town,
@@ -23,21 +14,22 @@ export default function Heading({details}) {
     cleanlinessRating,
   } = details;
 
+  const navigateReview = () => {
+    navigation.navigate('AddReview');
+  };
+
   const styles = StyleSheet.create({
     root: {
       padding: 50,
       color: 'red',
       borderColor: 'red',
-      // borderWidth: 2,
     },
     text: {
-      // justifyContent: 'center',
       alignItems: 'center',
     },
     name: {
       fontSize: 30,
       borderColor: 'blue',
-      // borderWidth: 1,
     },
     ratingsContainer: {
       flexDirection: 'row',
@@ -51,7 +43,6 @@ export default function Heading({details}) {
       alignItems: 'center',
       justifyContent: 'center',
       borderColor: 'black',
-      // borderWidth: 1,
       padding: 10,
     },
     reviewButton: {
@@ -84,9 +75,7 @@ export default function Heading({details}) {
           <Paragraph>Cleanliness: {cleanlinessRating}</Paragraph>
         </View>
       </View>
-      <Button mode="contained" style={styles.reviewButton}>
-        Add A Review
-      </Button>
+      <Button text="Add A Review" handler={navigateReview} />
     </View>
   );
 }
