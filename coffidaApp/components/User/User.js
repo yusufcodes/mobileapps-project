@@ -45,9 +45,14 @@ export default function User({navigation}) {
           liked_reviews,
           reviews,
         } = response.data;
-        setDetails({email: email, firstName: first_name, lastName: last_name});
+        setDetails({
+          email,
+          firstName: first_name,
+          lastName: last_name,
+        });
         setLocations(favourite_locations);
         setReviews(reviews);
+        console.log(reviews);
         setLikedReviews(liked_reviews);
       } catch (error) {
         console.log(error);
@@ -62,17 +67,18 @@ export default function User({navigation}) {
       <Title style={styles.heading}>My Profile</Title>
       <View style={styles.details}>
         <Subheading>Personal Details</Subheading>
+
         <View style={styles.singleDetail}>
           <Paragraph style={{fontWeight: 'bold'}}>First Name: </Paragraph>
-          <Paragraph>Yusuf</Paragraph>
+          <Paragraph>{details.firstName}</Paragraph>
         </View>
         <View style={styles.singleDetail}>
           <Paragraph style={{fontWeight: 'bold'}}>Last Name: </Paragraph>
-          <Paragraph>Chowdhury</Paragraph>
+          <Paragraph>{details.lastName}</Paragraph>
         </View>
         <View style={styles.singleDetail}>
           <Paragraph style={{fontWeight: 'bold'}}>Email: </Paragraph>
-          <Paragraph>17031422@stu.mmu.ac.uk</Paragraph>
+          <Paragraph>{details.email}</Paragraph>
         </View>
       </View>
       <Button text="Update Details" handler={displayUpdate} />
