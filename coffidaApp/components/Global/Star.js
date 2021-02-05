@@ -19,7 +19,6 @@ export default function Star({handler, rating}) {
   return (
     <View style={styles.root}>
       <StarRating
-        halfStarEnabled
         starSize={25}
         maxStars={5}
         buttonStyle={styles.button}
