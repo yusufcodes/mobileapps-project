@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Image, ScrollView, StyleSheet} from 'react-native';
+import {View, ScrollView, StyleSheet} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   ActivityIndicator,
   Colors,
@@ -7,57 +8,51 @@ import {
   Divider,
   Title,
 } from 'react-native-paper';
-import getToken from '../../functions/getToken';
 import Heading from './Shop/Heading';
 import LikeButton from '../Global/LikeButton';
-
-const axios = require('axios');
+import getLocation from '../../functions/network/getLocation';
 
 export default function Shop({route, navigation}) {
   const {id} = route.params;
   const [shop, setShop] = useState();
 
+  const handleResponse = (response) => {
+    const {
+      location_name: name,
+      location_town: town,
+      photo_path: photo,
+      avg_overall_rating: overallRating,
+      avg_price_rating: priceRating,
+      avg_quality_rating: qualityRating,
+      avg_clenliness_rating: cleanlinessRating,
+      location_reviews: reviews,
+    } = response.data;
+
+    setShop({
+      name,
+      town,
+      photo,
+      overallRating,
+      priceRating,
+      qualityRating,
+      cleanlinessRating,
+      reviews,
+    });
+  };
+
+  const performRequest = async function () {
+    const response = await getLocation(id);
+    handleResponse(response);
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      performRequest();
+    }, []),
+  );
+
   useEffect(() => {
-    async function response() {
-      const token = await getToken();
-      try {
-        const response = await axios({
-          method: 'get',
-          url: `http://10.0.2.2:3333/api/1.0.0/location/${id}`,
-          responseType: 'json',
-          headers: {'X-Authorization': token},
-        });
-
-        const {
-          location_name: name,
-          location_town: town,
-          photo_path: photo,
-          avg_overall_rating: overallRating,
-          avg_price_rating: priceRating,
-          avg_quality_rating: qualityRating,
-          avg_clenliness_rating: cleanlinessRating,
-          location_reviews: reviews,
-        } = response.data;
-
-        setShop({
-          name,
-          town,
-          photo,
-          overallRating,
-          priceRating,
-          qualityRating,
-          cleanlinessRating,
-          reviews,
-        });
-        console.log(`Retrieved single shop`);
-        console.log('Reviews:');
-        console.log(reviews);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-
-    response();
+    performRequest();
   }, []);
 
   const handleLike = () => {
@@ -79,7 +74,7 @@ export default function Shop({route, navigation}) {
   if (shop) {
     renderShop = (
       <ScrollView style={styles.root}>
-        <Heading details={shop} navigation={navigation} />
+        <Heading details={shop} navigation={navigation} id={id} />
         <Title
           style={{
             marginLeft: 20,
@@ -88,15 +83,18 @@ export default function Shop({route, navigation}) {
           Reviews
         </Title>
         {shop.reviews.map(
-          ({
-            review_body,
-            overall_rating,
-            price_rating,
-            quality_rating,
-            clenliness_rating,
-            likes,
-          }) => (
-            <>
+          (
+            {
+              review_body,
+              overall_rating,
+              price_rating,
+              quality_rating,
+              clenliness_rating,
+              likes,
+            },
+            index,
+          ) => (
+            <View key={index}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -120,7 +118,7 @@ export default function Shop({route, navigation}) {
                 </View>
               </View>
               <Divider />
-            </>
+            </View>
           ),
         )}
       </ScrollView>
