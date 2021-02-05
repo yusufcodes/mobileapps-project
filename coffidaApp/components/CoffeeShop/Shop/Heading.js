@@ -4,7 +4,7 @@ import {Title, Subheading, Paragraph} from 'react-native-paper';
 import LikeButton from '../../Global/LikeButton';
 import Button from '../../Global/Button';
 
-export default function Heading({details, navigation}) {
+export default function Heading({details, navigation, id}) {
   const {
     name,
     town,
@@ -15,7 +15,7 @@ export default function Heading({details, navigation}) {
   } = details;
 
   const navigateReview = () => {
-    navigation.navigate('AddReview');
+    navigation.navigate('AddReview', {navigation, id});
   };
 
   const styles = StyleSheet.create({

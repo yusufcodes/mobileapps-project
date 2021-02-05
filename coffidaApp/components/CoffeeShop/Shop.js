@@ -51,10 +51,6 @@ export default function Shop({route, navigation}) {
     }, []),
   );
 
-  useEffect(() => {
-    performRequest();
-  }, []);
-
   const handleLike = () => {
     console.log('Like button pressed');
   };
