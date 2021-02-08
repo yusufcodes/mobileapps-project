@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {Title, Subheading, Paragraph} from 'react-native-paper';
 import Button from '../Global/Button';
 import getToken from '../../functions/getToken';
 import getId from '../../functions/getId';
+import Review from '../CoffeeShop/Review';
 
 const axios = require('axios');
 
@@ -63,7 +64,7 @@ export default function User({navigation}) {
   }, []);
 
   return (
-    <View style={styles.root}>
+    <ScrollView style={styles.root}>
       <Title style={styles.heading}>My Profile</Title>
       <View style={styles.details}>
         <Subheading>Personal Details</Subheading>
@@ -82,6 +83,35 @@ export default function User({navigation}) {
         </View>
       </View>
       <Button text="Update Details" handler={displayUpdate} />
-    </View>
+      <Title>My Reviews</Title>
+      {reviews.map(
+        (
+          {
+            review: {
+              review_body,
+              overall_rating,
+              price_rating,
+              quality_rating,
+              clenliness_rating,
+              likes,
+            },
+          },
+          index,
+        ) => (
+          <View key={index}>
+            <Review
+              details={{
+                review_body,
+                overall_rating,
+                price_rating,
+                quality_rating,
+                clenliness_rating,
+                likes,
+              }}
+            />
+          </View>
+        ),
+      )}
+    </ScrollView>
   );
 }
