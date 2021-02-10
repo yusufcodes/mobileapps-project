@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import {Title, Subheading, Paragraph} from 'react-native-paper';
+import {Title, Subheading, Paragraph, List} from 'react-native-paper';
 import Button from '../Global/Button';
 import getUser from '../../functions/network/getUser';
 import Review from '../CoffeeShop/Review';
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
 
 export default function User({navigation}) {
   const [details, setDetails] = useState({});
-  const [, setLocations] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [likedReviews, setLikedReviews] = useState([]);
 
@@ -46,6 +46,8 @@ export default function User({navigation}) {
         setLocations(favourite_locations);
         setReviews(reviews);
         setLikedReviews(liked_reviews);
+        console.log('Locations');
+        console.log(locations);
       }
 
       response();
@@ -72,6 +74,17 @@ export default function User({navigation}) {
         </View>
       </View>
       <Button text="Update Details" handler={displayUpdate} />
+      <Title>My Liked Locations</Title>
+      {locations.map((item, index) => (
+        <List.Item
+          key={index}
+          title={`${item.location_name}`}
+          description={`Town: ${item.location_town} \nRating: ${item.avg_overall_rating}`}
+          descriptionNumberOfLines={2}
+          left={(props) => <List.Icon {...props} icon="coffee" />}
+          onPress={() => navigation.navigate('Shop', {id: item.location_id})}
+        />
+      ))}
       <Title>My Reviews</Title>
       {reviews.map(
         (
@@ -101,6 +114,7 @@ export default function User({navigation}) {
           </View>
         ),
       )}
+
       <Title>My Liked Reviews</Title>
       {likedReviews.map(
         (
