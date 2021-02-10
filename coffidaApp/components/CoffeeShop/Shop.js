@@ -23,6 +23,7 @@ export default function Shop({route, navigation}) {
     } = response.data;
 
     setShop({
+      id,
       name,
       town,
       photo,
@@ -63,6 +64,7 @@ export default function Shop({route, navigation}) {
         {shop.reviews.map(
           (
             {
+              review_id,
               review_body,
               overall_rating,
               price_rating,
@@ -75,6 +77,8 @@ export default function Shop({route, navigation}) {
             <View key={index}>
               <Review
                 details={{
+                  id,
+                  review_id,
                   review_body,
                   overall_rating,
                   price_rating,
