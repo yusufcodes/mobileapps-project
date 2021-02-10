@@ -35,13 +35,12 @@ export default function Shop({route, navigation}) {
     });
   };
 
-  const performRequest = async function () {
-    const response = await getLocation(id);
-    handleResponse(response);
-  };
-
   useFocusEffect(
     React.useCallback(() => {
+      async function performRequest() {
+        const response = await getLocation(id);
+        handleResponse(response);
+      }
       performRequest();
     }, []),
   );
