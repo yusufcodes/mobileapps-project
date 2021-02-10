@@ -1,12 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import React, {useState} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
 import {Title, Subheading, Paragraph} from 'react-native-paper';
 import Button from '../Global/Button';
-import getToken from '../../functions/getToken';
-import getId from '../../functions/getId';
+import getUser from '../../functions/network/getUser';
 import Review from '../CoffeeShop/Review';
-
-const axios = require('axios');
 
 const styles = StyleSheet.create({
   root: {
@@ -22,22 +20,16 @@ const styles = StyleSheet.create({
 
 export default function User({navigation}) {
   const [details, setDetails] = useState({});
-  const [locations, setLocations] = useState([]);
+  const [, setLocations] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [likedReviews, setLikedReviews] = useState([]);
 
   const displayUpdate = () => navigation.navigate('Update', {details});
-  useEffect(() => {
-    async function response() {
-      const token = await getToken();
-      const id = await getId();
-      try {
-        const response = await axios({
-          method: 'get',
-          url: `http://10.0.2.2:3333/api/1.0.0/user/${parseInt(id)}`,
-          responseType: 'json',
-          headers: {'X-Authorization': token},
-        });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      async function response() {
+        const response = await getUser();
         const {
           email,
           first_name,
@@ -53,15 +45,12 @@ export default function User({navigation}) {
         });
         setLocations(favourite_locations);
         setReviews(reviews);
-        console.log(reviews);
         setLikedReviews(liked_reviews);
-      } catch (error) {
-        console.log(error);
       }
-    }
 
-    response();
-  }, []);
+      response();
+    }, []),
+  );
 
   return (
     <ScrollView style={styles.root}>
@@ -85,6 +74,35 @@ export default function User({navigation}) {
       <Button text="Update Details" handler={displayUpdate} />
       <Title>My Reviews</Title>
       {reviews.map(
+        (
+          {
+            review: {
+              review_body,
+              overall_rating,
+              price_rating,
+              quality_rating,
+              clenliness_rating,
+              likes,
+            },
+          },
+          index,
+        ) => (
+          <View key={index}>
+            <Review
+              details={{
+                review_body,
+                overall_rating,
+                price_rating,
+                quality_rating,
+                clenliness_rating,
+                likes,
+              }}
+            />
+          </View>
+        ),
+      )}
+      <Title>My Liked Reviews</Title>
+      {likedReviews.map(
         (
           {
             review: {
