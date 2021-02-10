@@ -110,6 +110,7 @@ export default function User({navigation}) {
                 clenliness_rating,
                 likes,
               }}
+              editable
             />
           </View>
         ),

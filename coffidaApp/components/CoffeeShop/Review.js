@@ -2,12 +2,22 @@ import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Paragraph, Divider} from 'react-native-paper';
 import LikeButton from '../Global/LikeButton';
+import EditButton from '../Global/EditButton';
+
 import getUser from '../../functions/network/getUser';
 import getLocation from '../../functions/network/getLocation';
 import likeReview from '../../functions/network/likeReview';
 import showToast from '../../functions/showToast';
 
-export default function Review({details}) {
+let renders = 0;
+
+export default function Review({details, editable}) {
+  if (editable === true) {
+    console.log('Review: Can be edited');
+  } else {
+    console.log('Review: Cannot be edited');
+  }
+
   const {
     id: location_id,
     review_id,
@@ -22,10 +32,12 @@ export default function Review({details}) {
   const [reviewLikes, setReviewLikes] = useState(likes);
 
   const styles = StyleSheet.create({
-    root: {},
     like: {
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    buttons: {
+      flexDirection: 'row',
     },
   });
   const getLikes = async (reviewId) => {
@@ -79,6 +91,10 @@ export default function Review({details}) {
     setReviewLikes(newLikes);
   };
 
+  const handleEdit = () => {
+    console.log('handleEdit: Running...');
+  };
+
   return (
     <>
       <View
@@ -97,9 +113,16 @@ export default function Review({details}) {
           <Paragraph>
             {`Overall: ${overall_rating}/5 \nPrice: ${price_rating}/5 \nQuality: ${quality_rating}/5  \nCleanliness: ${clenliness_rating}/5`}
           </Paragraph>
-          <View style={styles.like}>
-            <LikeButton handler={() => handleLike()} size={20} />
-            <Paragraph>{reviewLikes}</Paragraph>
+          <View style={styles.buttons}>
+            <View style={styles.like}>
+              <LikeButton handler={() => handleLike()} size={20} />
+              <Paragraph>{reviewLikes}</Paragraph>
+            </View>
+            {editable ? (
+              <View>
+                <EditButton handler={() => handleEdit()} size={20} />
+              </View>
+            ) : null}
           </View>
         </View>
       </View>
