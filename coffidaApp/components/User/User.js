@@ -90,6 +90,7 @@ export default function User({navigation}) {
         (
           {
             review: {
+              review_id,
               review_body,
               overall_rating,
               price_rating,
@@ -97,12 +98,15 @@ export default function User({navigation}) {
               clenliness_rating,
               likes,
             },
+            location: {location_id},
           },
           index,
         ) => (
           <View key={index}>
             <Review
               details={{
+                location_id,
+                review_id,
                 review_body,
                 overall_rating,
                 price_rating,
@@ -111,6 +115,7 @@ export default function User({navigation}) {
                 likes,
               }}
               editable
+              navigation={navigation}
             />
           </View>
         ),

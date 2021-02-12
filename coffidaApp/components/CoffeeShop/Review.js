@@ -11,7 +11,8 @@ import showToast from '../../functions/showToast';
 
 let renders = 0;
 
-export default function Review({details, editable}) {
+export default function Review({details, editable, navigation = false}) {
+  console.log(navigation);
   if (editable === true) {
     console.log('Review: Can be edited');
   } else {
@@ -19,7 +20,7 @@ export default function Review({details, editable}) {
   }
 
   const {
-    id: location_id,
+    location_id,
     review_id,
     review_body,
     overall_rating,
@@ -93,6 +94,19 @@ export default function Review({details, editable}) {
 
   const handleEdit = () => {
     console.log('handleEdit: Running...');
+    console.log(location_id);
+    // navigate to Edit Review Page
+    // what do I need:
+    // current data for current review (props)
+    navigation.navigate('EditReview', {
+      location_id,
+      review_id,
+      review_body,
+      overall_rating,
+      price_rating,
+      quality_rating,
+      clenliness_rating,
+    });
   };
 
   return (
