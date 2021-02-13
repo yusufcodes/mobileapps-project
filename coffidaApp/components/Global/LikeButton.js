@@ -8,6 +8,9 @@ export default function LikeButton(props) {
       icon="heart"
       color={Colors.red500}
       size={size}
+      style={{
+        marginHorizontal: 0,
+      }}
       onPress={() => handler()}
     />
   );

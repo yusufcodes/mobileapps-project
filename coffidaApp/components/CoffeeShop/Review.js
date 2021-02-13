@@ -1,17 +1,30 @@
 import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Paragraph, Divider} from 'react-native-paper';
+import {Paragraph, Divider, Dialog, Portal, Button} from 'react-native-paper';
 import LikeButton from '../Global/LikeButton';
 import EditButton from '../Global/EditButton';
-
+import DeleteButton from '../Global/DeleteButton';
+// import Dialog from '../Global/Dialog';
 import getUser from '../../functions/network/getUser';
 import getLocation from '../../functions/network/getLocation';
 import likeReview from '../../functions/network/likeReview';
+import deleteReview from '../../functions/network/deleteReview';
 import showToast from '../../functions/showToast';
 
 let renders = 0;
 
-export default function Review({details, editable, navigation = false}) {
+export default function Review({
+  details,
+  editable,
+  navigation = false,
+  refreshReviews = false,
+}) {
+  const [visible, setVisible] = React.useState(false);
+
+  const showDialog = () => setVisible(true);
+
+  const hideDialog = () => setVisible(false);
+
   console.log(navigation);
   if (editable === true) {
     console.log('Review: Can be edited');
@@ -32,15 +45,6 @@ export default function Review({details, editable, navigation = false}) {
 
   const [reviewLikes, setReviewLikes] = useState(likes);
 
-  const styles = StyleSheet.create({
-    like: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    buttons: {
-      flexDirection: 'row',
-    },
-  });
   const getLikes = async (reviewId) => {
     console.log('getLikes: Running...');
     const response = await getLocation(location_id);
@@ -109,6 +113,29 @@ export default function Review({details, editable, navigation = false}) {
     });
   };
 
+  const handleDelete = async () => {
+    const performDelete = await deleteReview(location_id, review_id);
+    if (performDelete) {
+      console.log('Review: Performing refreshReviews...');
+      await refreshReviews();
+      hideDialog();
+      showToast('Success: Review Deleted');
+    } else {
+      console.log('Delete failed?');
+    }
+  };
+
+  const styles = StyleSheet.create({
+    like: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    buttons: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+  });
+
   return (
     <>
       <View
@@ -133,9 +160,28 @@ export default function Review({details, editable, navigation = false}) {
               <Paragraph>{reviewLikes}</Paragraph>
             </View>
             {editable ? (
-              <View>
-                <EditButton handler={() => handleEdit()} size={20} />
-              </View>
+              <>
+                <View>
+                  <EditButton handler={() => handleEdit()} size={20} />
+                </View>
+                <View>
+                  <DeleteButton handler={() => showDialog()} size={20} />
+                  <Portal>
+                    <Dialog visible={visible} onDismiss={hideDialog}>
+                      <Dialog.Title>Delete Review</Dialog.Title>
+                      <Dialog.Content>
+                        <Paragraph>
+                          Are you sure you want to delete this review?
+                        </Paragraph>
+                      </Dialog.Content>
+                      <Dialog.Actions>
+                        <Button onPress={hideDialog}>Cancel</Button>
+                        <Button onPress={handleDelete}>OK</Button>
+                      </Dialog.Actions>
+                    </Dialog>
+                  </Portal>
+                </View>
+              </>
             ) : null}
           </View>
         </View>

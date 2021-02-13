@@ -12,7 +12,7 @@ const Stack = createStackNavigator();
 const App = () => (
   <PaperProvider>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Log In">
+      <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Sign Up" component={SignUp} />
         <Stack.Screen name="Log In" component={Login} />
         <Stack.Screen

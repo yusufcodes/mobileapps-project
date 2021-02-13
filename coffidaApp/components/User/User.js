@@ -36,6 +36,14 @@ export default function User({navigation}) {
     }
   };
 
+  // TODO: Error handling
+  const refreshReviews = async () => {
+    console.log('Refreshing reviews...');
+    const response = await getUser();
+    const {reviews} = response.data;
+    setReviews(reviews);
+  };
+
   useFocusEffect(
     React.useCallback(() => {
       async function response() {
@@ -127,6 +135,7 @@ export default function User({navigation}) {
               }}
               editable
               navigation={navigation}
+              refreshReviews={refreshReviews}
             />
           </View>
         ),
