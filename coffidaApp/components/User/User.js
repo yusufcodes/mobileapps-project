@@ -5,6 +5,7 @@ import {Title, Subheading, Paragraph, List} from 'react-native-paper';
 import Button from '../Global/Button';
 import getUser from '../../functions/network/getUser';
 import Review from '../CoffeeShop/Review';
+import logout from '../../functions/network/logout';
 
 const styles = StyleSheet.create({
   root: {
@@ -25,6 +26,15 @@ export default function User({navigation}) {
   const [likedReviews, setLikedReviews] = useState([]);
 
   const displayUpdate = () => navigation.navigate('Update', {details});
+
+  const handleLogout = () => {
+    const performLogout = logout();
+    if (performLogout) {
+      navigation.navigate('SignUp');
+    } else {
+      console.log('Handle log out: Not working');
+    }
+  };
 
   useFocusEffect(
     React.useCallback(() => {
@@ -74,6 +84,7 @@ export default function User({navigation}) {
         </View>
       </View>
       <Button text="Update Details" handler={displayUpdate} />
+      <Button text="Logout" handler={handleLogout} />
       <Title>My Liked Locations</Title>
       {locations.map((item, index) => (
         <List.Item

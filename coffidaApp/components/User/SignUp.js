@@ -6,6 +6,7 @@ import showToast from '../../functions/showToast';
 const axios = require('axios');
 
 export default function SignUp({navigation}) {
+  navigation.setOptions({tabBarVisible: false});
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
