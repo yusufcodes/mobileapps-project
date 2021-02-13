@@ -1,10 +1,6 @@
 import React from 'react';
-import {View} from 'react-native';
-// import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import AllShops from './CoffeeShop/AllShops';
 import CoffeeStackScreen from './Navigation/CoffeeStackScreen';
 import UserStackScreen from './Navigation/UserStackScreen';
 
