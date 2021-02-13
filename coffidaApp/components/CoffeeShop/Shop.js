@@ -7,7 +7,7 @@ import getLocation from '../../functions/network/getLocation';
 import Review from './Review';
 
 export default function Shop({route, navigation}) {
-  const {id} = route.params;
+  const {id: location_id} = route.params;
   const [shop, setShop] = useState();
 
   const handleResponse = (response) => {
@@ -23,7 +23,7 @@ export default function Shop({route, navigation}) {
     } = response.data;
 
     setShop({
-      id,
+      location_id,
       name,
       town,
       photo,
@@ -38,7 +38,7 @@ export default function Shop({route, navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       async function performRequest() {
-        const response = await getLocation(id);
+        const response = await getLocation(location_id);
         handleResponse(response);
       }
       performRequest();
@@ -52,7 +52,7 @@ export default function Shop({route, navigation}) {
   if (shop) {
     renderShop = (
       <ScrollView>
-        <Heading details={shop} navigation={navigation} id={id} />
+        <Heading details={shop} navigation={navigation} id={location_id} />
         <Title
           style={{
             marginLeft: 20,
@@ -76,7 +76,7 @@ export default function Shop({route, navigation}) {
             <View key={index}>
               <Review
                 details={{
-                  id,
+                  location_id,
                   review_id,
                   review_body,
                   overall_rating,

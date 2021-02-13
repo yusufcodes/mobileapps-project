@@ -45,12 +45,12 @@ export default function Review({
 
   const [reviewLikes, setReviewLikes] = useState(likes);
 
-  const getLikes = async (reviewId) => {
+  const getLikes = async () => {
     console.log('getLikes: Running...');
     const response = await getLocation(location_id);
     const {location_reviews: reviews} = response.data;
     const review = reviews.find(
-      (currentReview) => currentReview.review_id === reviewId,
+      (currentReview) => currentReview.review_id === review_id,
     );
     if (!review) {
       console.log('getLikes: Unable to find review...');
