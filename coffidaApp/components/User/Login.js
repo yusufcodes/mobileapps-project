@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {View, Text, StyleSheet, ToastAndroid, Keyboard} from 'react-native';
+import {RNCamera} from 'react-native-camera';
 import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
 import showToast from '../../functions/showToast';
 import storeData from '../../functions/storeData';
@@ -9,10 +10,16 @@ const axios = require('axios');
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const camera = useRef(null);
 
   const styles = StyleSheet.create({
     container: {
       padding: 50,
+    },
+    preview: {
+      flex: 1,
+      justifyContent: 'flex-end',
+      alignItems: 'center',
     },
   });
 
@@ -65,6 +72,7 @@ export default function Login({navigation}) {
         onPress={() => login()}>
         Log In
       </Button>
+      <RNCamera ref={camera} style={styles.preview} />
     </View>
   );
 }
