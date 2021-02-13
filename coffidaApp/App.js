@@ -5,6 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {Provider as PaperProvider} from 'react-native-paper';
 import SignUp from './components/User/SignUp';
 import Login from './components/User/Login';
+import Test from './components/User/Test';
 import Main from './components/Main';
 
 const Stack = createStackNavigator();
@@ -12,7 +13,7 @@ const Stack = createStackNavigator();
 const App = () => (
   <PaperProvider>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
+      <Stack.Navigator initialRouteName="Log In">
         <Stack.Screen name="Sign Up" component={SignUp} />
         <Stack.Screen name="Log In" component={Login} />
         <Stack.Screen

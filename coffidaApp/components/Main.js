@@ -1,10 +1,13 @@
 import React from 'react';
+import {createStackNavigator} from '@react-navigation/stack';
 import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CoffeeStackScreen from './Navigation/CoffeeStackScreen';
 import UserStackScreen from './Navigation/UserStackScreen';
+import Test from '../components/User/Test';
 
 const Tab = createMaterialBottomTabNavigator();
+// const Stack = createStackNavigator();
 
 export default function Main() {
   return (
@@ -34,6 +37,13 @@ export default function Main() {
               size={size}
             />
           ),
+        }}
+      />
+      <Tab.Screen
+        name="Test"
+        component={Test}
+        options={{
+          tabBarVisible: false,
         }}
       />
     </Tab.Navigator>
