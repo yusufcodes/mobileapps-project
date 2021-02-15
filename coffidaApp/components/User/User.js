@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
+
 import {View, StyleSheet, ScrollView} from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {Title, Subheading, Paragraph, List} from 'react-native-paper';
 import Button from '../Global/Button';
 import getUser from '../../functions/network/getUser';
@@ -20,6 +21,8 @@ const styles = StyleSheet.create({
 });
 
 export default function User({navigation}) {
+  const globalNavigation = useNavigation(); // global navigation object
+
   const [details, setDetails] = useState({});
   const [locations, setLocations] = useState([]);
   const [reviews, setReviews] = useState([]);
@@ -30,7 +33,7 @@ export default function User({navigation}) {
   const handleLogout = () => {
     const performLogout = logout();
     if (performLogout) {
-      navigation.navigate('SignUp');
+      globalNavigation.navigate('Sign Up');
     } else {
       console.log('Handle log out: Not working');
     }
