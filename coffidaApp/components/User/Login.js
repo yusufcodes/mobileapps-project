@@ -2,6 +2,7 @@ import React, {useRef} from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
 import {RNCamera} from 'react-native-camera';
 import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
+import Camera from '../Camera';
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState('');
@@ -23,13 +24,6 @@ export default function Login({navigation}) {
 
   const login = async () => {
     Keyboard.dismiss();
-  };
-
-  const takePicture = async (camera) => {
-    const options = {quality: 0.5, base64: true};
-    const data = await camera.takePictureAsync(options);
-    //  eslint-disable-next-line
-    console.log(data.uri);
   };
 
   return (
@@ -58,8 +52,7 @@ export default function Login({navigation}) {
         onPress={() => login()}>
         Log In
       </Button>
-      <RNCamera style={styles.preview} captureAudio={false} />
-      <Button onPress={() => takePicture()}>Take Photo</Button>
+      {/* <Camera /> */}
     </View>
   );
 }
