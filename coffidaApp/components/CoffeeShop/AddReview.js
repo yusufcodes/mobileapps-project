@@ -1,10 +1,20 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Keyboard} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  Keyboard,
+  Image,
+} from 'react-native';
 import {Title, TextInput, IconButton} from 'react-native-paper';
+import UploadPhoto from './UploadPhoto';
 import Star from '../Global/Star';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import getToken from '../../functions/getToken';
+import getUser from '../../functions/network/getUser';
+import Camera from '../Global/Camera';
 
 const styles = StyleSheet.create({
   root: {
@@ -27,12 +37,20 @@ export default function AddReview({route, navigation}) {
   const [price, setPrice] = useState(0);
   const [quality, setQuality] = useState(0);
   const [clean, setClean] = useState(0);
-  const [review, setReview] = React.useState('');
+  const [review, setReview] = useState('');
+  const [takePhoto, setTakePhoto] = useState(false);
+  const [photoUri, setPhotoUri] = useState(null);
 
   const handleOverall = (rating) => setOverall(rating);
   const handlePrice = (rating) => setPrice(rating);
   const handleQuality = (rating) => setQuality(rating);
   const handleClean = (rating) => setClean(rating);
+
+  // const handlePhoto = () =>
+  //   takePhoto ? setTakePhoto(false) : setTakePhoto(true);
+  const handlePhoto = () => navigation.navigate('UploadPhoto', {setPhotoUri});
+
+  console.log(`photoUri: ${photoUri}`);
 
   const submitReview = async () => {
     console.log('Submitting Review...');
@@ -51,66 +69,99 @@ export default function AddReview({route, navigation}) {
         clenliness_rating: clean,
         review_body: review,
       },
-    }).then(
-      (response) => {
-        if (response.status === 201) {
-          showToast('Review submitted!');
-          console.log('Review submitted!');
-          navigation.goBack();
+    }).then(async (response) => {
+      if (response.status === 201) {
+        if (photoUri) {
+          console.log('photo: getting user info');
+          // .. do logic to add photo to review
+          const userDetails = await getUser();
+          // console.log(userDetails.data.reviews);
+          const reviewToFind = userDetails.data.reviews.find(
+            (item, index) =>
+              review === item.review.review_body &&
+              clean === item.review.clenliness_rating &&
+              overall === item.review.overall_rating &&
+              price === item.review.price_rating &&
+              quality === item.review.quality_rating,
+          );
+
+          console.log('got user');
+          console.log(`New Review ID: ${reviewToFind.review.review_id}`);
         }
-      },
-      (error) => {
-        showToast('Error submitting review...');
-        console.log(error);
-      },
-    );
+        showToast('Review submitted!');
+        console.log('Review submitted!');
+        navigation.goBack();
+      }
+    });
   };
+
   return (
-    <View style={styles.root}>
-      <Title>Add Review</Title>
+    <>
+      <View style={styles.root}>
+        <Title>Add Review</Title>
 
-      <View style={styles.rating}>
-        <Text>Overall: </Text>
-        <Star handler={handleOverall} rating={overall} />
-        <IconButton
-          icon="close-circle"
-          size={20}
-          onPress={() => setOverall(0)}
+        <View style={styles.rating}>
+          <Text>Overall: </Text>
+          <Star handler={handleOverall} rating={overall} />
+          <IconButton
+            icon="close-circle"
+            size={20}
+            onPress={() => setOverall(0)}
+          />
+        </View>
+
+        <View style={styles.rating}>
+          <Text>Price: </Text>
+          <Star handler={handlePrice} rating={price} />
+          <IconButton
+            icon="close-circle"
+            size={20}
+            onPress={() => setPrice(0)}
+          />
+        </View>
+
+        <View style={styles.rating}>
+          <Text>Quality: </Text>
+          <Star handler={handleQuality} rating={quality} />
+          <IconButton
+            icon="close-circle"
+            size={20}
+            onPress={() => setQuality(0)}
+          />
+        </View>
+
+        <View style={styles.rating}>
+          <Text>Cleanliness: </Text>
+          <Star handler={handleClean} rating={clean} />
+          <IconButton
+            icon="close-circle"
+            size={20}
+            onPress={() => setClean(0)}
+          />
+        </View>
+
+        <TextInput
+          label="Review"
+          mode="outlined"
+          placeholder="Enter your review here..."
+          multiline
+          dense
+          value={review}
+          onChangeText={(review) => setReview(review)}
         />
-      </View>
-
-      <View style={styles.rating}>
-        <Text>Price: </Text>
-        <Star handler={handlePrice} rating={price} />
-        <IconButton icon="close-circle" size={20} onPress={() => setPrice(0)} />
-      </View>
-
-      <View style={styles.rating}>
-        <Text>Quality: </Text>
-        <Star handler={handleQuality} rating={quality} />
-        <IconButton
-          icon="close-circle"
-          size={20}
-          onPress={() => setQuality(0)}
+        <Button
+          text={takePhoto ? `Close Camera` : `Add Photo to Review`}
+          handler={handlePhoto}
         />
-      </View>
+        <Image
+          source={{
+            uri: photoUri,
+          }}
+        />
 
-      <View style={styles.rating}>
-        <Text>Cleanliness: </Text>
-        <Star handler={handleClean} rating={clean} />
-        <IconButton icon="close-circle" size={20} onPress={() => setClean(0)} />
+        <Button text="Submit Review" handler={submitReview} />
       </View>
-
-      <TextInput
-        label="Review"
-        mode="outlined"
-        placeholder="Enter your review here..."
-        multiline
-        dense
-        value={review}
-        onChangeText={(review) => setReview(review)}
-      />
-      <Button text="Submit Review" handler={submitReview} />
-    </View>
+      {/* {takePhoto ? <Camera /> : null} */}
+    </>
   );
 }

@@ -17,9 +17,11 @@ const styles = StyleSheet.create({
 });
 class Camera extends Component {
   takePicture = async () => {
+    const {storeUri} = this.props;
     if (this.camera) {
       const options = {quality: 0.5, base64: true};
       const data = await this.camera.takePictureAsync(options);
+      storeUri(data.uri);
       console.log(data.uri);
     }
   };
