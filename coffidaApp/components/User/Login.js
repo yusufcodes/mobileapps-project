@@ -1,8 +1,10 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
+import {RNCamera} from 'react-native-camera';
 import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
+import Camera from '../Camera';
 
-export default function Login() {
+export default function Login({navigation}) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -52,6 +54,7 @@ export default function Login() {
           Log In
         </Button>
       </View>
+      <Camera />
     </>
   );
 }
