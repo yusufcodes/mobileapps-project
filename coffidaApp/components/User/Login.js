@@ -1,8 +1,10 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
-import {RNCamera} from 'react-native-camera';
 import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
-import Camera from '../Camera';
+import showToast from '../../functions/showToast';
+import storeData from '../../functions/storeData';
+
+const axios = require('axios');
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState('');
@@ -24,6 +26,25 @@ export default function Login({navigation}) {
 
   const login = async () => {
     Keyboard.dismiss();
+    const response = await axios
+      .post('http://10.0.2.2:3333/api/1.0.0/user/login', {
+        email,
+        password,
+      })
+      .then(
+        (response) => {
+          if (response.status === 200) {
+            storeData('token', response.data.token);
+            storeData('id', response.data.id.toString());
+            showToast('Login Successful!');
+            navigation.navigate('Main');
+          }
+        },
+        (error) => {
+          showToast('Incorrect email or password, please try again.');
+          console.log(`login: Error - ${error}`);
+        },
+      );
   };
 
   return (
@@ -54,7 +75,6 @@ export default function Login({navigation}) {
           Log In
         </Button>
       </View>
-      <Camera />
     </>
   );
 }
