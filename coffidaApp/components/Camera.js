@@ -1,66 +1,49 @@
-import React from 'react';
-import {View, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {Button} from 'react-native-paper';
 import {RNCamera} from 'react-native-camera';
-import {useCamera} from 'react-native-camera-hooks';
 
-const Camera = () => {
-  const [
-    {cameraRef, type, ratio, autoFocus, autoFocusPoint, isRecording},
-    {
-      toggleFacing,
-      touchToFocus,
-      textRecognized,
-      facesDetected,
-      recordVideo,
-      setIsRecording,
-    },
-  ] = useCamera();
+const styles = StyleSheet.create({
+  container: {flex: 1, flexDirection: 'column'},
+  preview: {flex: 1, justifyContent: 'flex-end', alignItems: 'center'},
+  capture: {
+    flex: 0,
+    borderRadius: 5,
+    padding: 15,
+    paddingHorizontal: 20,
+    alignSelf: 'center',
+    margin: 20,
+  },
+});
+class Camera extends Component {
+  takePicture = async () => {
+    if (this.camera) {
+      const options = {quality: 0.5, base64: true};
+      const data = await this.camera.takePictureAsync(options);
+      console.log(data.uri);
+    }
+  };
 
-  return (
-    <View style={{flex: 1}}>
-      <RNCamera
-        ref={cameraRef}
-        autoFocusPointOfInterest={autoFocusPoint.normalized}
-        type={type}
-        ratio={ratio}
-        style={{flex: 1}}
-        autoFocus={autoFocus}
-        onTextRecognized={textRecognized}
-        onFacesDetected={facesDetected}
-      />
-
-      <TouchableWithoutFeedback
-        style={{
-          flex: 1,
-        }}
-        onPress={touchToFocus}
-      />
-
-      <TouchableOpacity
-        testID="button"
-        onPress={toggleFacing}
-        style={{width: '100%', height: 45}}>
-        {type}
-      </TouchableOpacity>
-
-      {!isRecording && (
-        <TouchableOpacity
-          onPress={async () => {
-            try {
-              setIsRecording(true);
-              const data = await recordVideo();
-              console.warn(data);
-            } catch (error) {
-              console.warn(error);
-            } finally {
-              setIsRecording(false);
-            }
+  render() {
+    return (
+      <View style={styles.container}>
+        <RNCamera
+          ref={(ref) => {
+            this.camera = ref;
           }}
-          style={{width: '100%', height: 45}}
+          style={styles.preview}
         />
-      )}
-    </View>
-  );
-};
+        <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center'}}>
+          <Button
+            icon="camera"
+            mode="contained"
+            onPress={this.takePicture.bind(this)}>
+            Capture
+          </Button>
+        </View>
+      </View>
+    );
+  }
+}
 
 export default Camera;

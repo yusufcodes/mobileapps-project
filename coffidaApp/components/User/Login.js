@@ -27,32 +27,34 @@ export default function Login({navigation}) {
   };
 
   return (
-    <View style={styles.container}>
-      <Headline>Log In</Headline>
-      <Subheading>
-        Use your log in details to start using the Coffida app
-      </Subheading>
-      <TextInput
-        label="Email"
-        value={email}
-        mode="outlined"
-        onChangeText={(email) => setEmail(email)}
-      />
-      <TextInput
-        secureTextEntry
-        label="Password"
-        value={password}
-        mode="outlined"
-        onChangeText={(password) => setPassword(password)}
-      />
-      <Button
-        uppercase
-        accessibilityLabel="Log in to an existing account"
-        mode="contained"
-        onPress={() => login()}>
-        Log In
-      </Button>
-      {/* <Camera /> */}
-    </View>
+    <>
+      <View style={styles.container}>
+        <Headline>Log In</Headline>
+        <Subheading>
+          Use your log in details to start using the Coffida app
+        </Subheading>
+        <TextInput
+          label="Email"
+          value={email}
+          mode="outlined"
+          onChangeText={(email) => setEmail(email)}
+        />
+        <TextInput
+          secureTextEntry
+          label="Password"
+          value={password}
+          mode="outlined"
+          onChangeText={(password) => setPassword(password)}
+        />
+        <Button
+          uppercase
+          accessibilityLabel="Log in to an existing account"
+          mode="contained"
+          onPress={() => login()}>
+          Log In
+        </Button>
+      </View>
+      <Camera />
+    </>
   );
 }
