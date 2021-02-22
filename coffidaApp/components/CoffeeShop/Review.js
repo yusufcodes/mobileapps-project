@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
+import RNFS from 'react-native-fs';
 import {Paragraph, Divider, Dialog, Portal, Button} from 'react-native-paper';
 import LikeButton from '../Global/LikeButton';
 import EditButton from '../Global/EditButton';
@@ -9,6 +10,7 @@ import getLocation from '../../functions/network/getLocation';
 import likeReview from '../../functions/network/likeReview';
 import deleteReview from '../../functions/network/deleteReview';
 import getPhotoReview from '../../functions/network/getPhotoReview';
+import photoReview from '../../functions/network/photoReview';
 import showToast from '../../functions/showToast';
 
 export default function Review({
@@ -30,19 +32,31 @@ export default function Review({
 
   const [serverPhoto, setServerPhoto] = useState(null);
 
-  useEffect(() => {
-    (async function () {
+  const getReviewPhoto = async () => {
+    console.log(location_id);
+    console.log(review_id);
+    if (location_id && review_id) {
       const getPhoto = await getPhotoReview(location_id, review_id);
       if (getPhoto?.status === 200) {
         console.log('Photo found!!!!');
-        setServerPhoto(getPhoto);
+        setServerPhoto(getPhoto.data);
       }
+    }
+  };
+
+  useEffect(() => {
+    (async function () {
+      await getReviewPhoto();
     })();
   }, []);
   const [visible, setVisible] = React.useState(false);
+  const [visibleDialogPhoto, setVisibleDialogPhoto] = React.useState(false);
 
   const showDialog = () => setVisible(true);
   const hideDialog = () => setVisible(false);
+
+  const showDialogPhoto = () => setVisibleDialogPhoto(true);
+  const hideDialogPhoto = () => setVisibleDialogPhoto(false);
 
   const [reviewLikes, setReviewLikes] = useState(likes);
 
@@ -126,6 +140,27 @@ export default function Review({
     }
   };
 
+  const deletePhotoFile = () => RNFS.unlink(serverPhoto?.uri);
+
+  const handleDeletePhoto = async () => {
+    console.log(serverPhoto);
+    hideDialogPhoto();
+    console.log('deleting photo...');
+    console.log('AddReview: Adding photo taken to the review...');
+    const deletePhoto = true;
+    const response = await photoReview(location_id, review_id, deletePhoto);
+    if (response.status === 200) {
+      console.log('Review: Photo successfully deleted');
+      console.log(serverPhoto.uri);
+      deletePhotoFile();
+      await refreshReviews();
+      await getReviewPhoto();
+      console.log('Review: Reloaded everything!');
+    } else {
+      console.log('Error deleting the photo');
+    }
+  };
+
   const styles = StyleSheet.create({
     like: {
       flexDirection: 'row',
@@ -196,6 +231,25 @@ export default function Review({
       <View>
         {serverPhoto ? (
           <Image source={{uri: serverPhoto.uri}} style={styles.image} />
+        ) : null}
+        {editable && serverPhoto ? (
+          <View>
+            <DeleteButton handler={() => showDialogPhoto()} size={20} />
+            <Portal>
+              <Dialog visible={visibleDialogPhoto} onDismiss={hideDialogPhoto}>
+                <Dialog.Title>Delete Photo from Review</Dialog.Title>
+                <Dialog.Content>
+                  <Paragraph>
+                    Are you sure you want to delete this photo?
+                  </Paragraph>
+                </Dialog.Content>
+                <Dialog.Actions>
+                  <Button onPress={hideDialogPhoto}>Cancel</Button>
+                  <Button onPress={handleDeletePhoto}>OK</Button>
+                </Dialog.Actions>
+              </Dialog>
+            </Portal>
+          </View>
         ) : null}
       </View>
       <Divider />
