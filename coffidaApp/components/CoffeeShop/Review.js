@@ -1,17 +1,15 @@
-import React, {useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, Image} from 'react-native';
 import {Paragraph, Divider, Dialog, Portal, Button} from 'react-native-paper';
 import LikeButton from '../Global/LikeButton';
 import EditButton from '../Global/EditButton';
 import DeleteButton from '../Global/DeleteButton';
-// import Dialog from '../Global/Dialog';
 import getUser from '../../functions/network/getUser';
 import getLocation from '../../functions/network/getLocation';
 import likeReview from '../../functions/network/likeReview';
 import deleteReview from '../../functions/network/deleteReview';
+import getPhotoReview from '../../functions/network/getPhotoReview';
 import showToast from '../../functions/showToast';
-
-let renders = 0;
 
 export default function Review({
   details,
@@ -19,12 +17,6 @@ export default function Review({
   navigation = false,
   refreshReviews = false,
 }) {
-  const [visible, setVisible] = React.useState(false);
-
-  const showDialog = () => setVisible(true);
-
-  const hideDialog = () => setVisible(false);
-
   const {
     location_id,
     review_id,
@@ -35,6 +27,22 @@ export default function Review({
     clenliness_rating,
     likes,
   } = details;
+
+  const [serverPhoto, setServerPhoto] = useState(null);
+
+  useEffect(() => {
+    (async function () {
+      const getPhoto = await getPhotoReview(location_id, review_id);
+      if (getPhoto?.status === 200) {
+        console.log('Photo found!!!!');
+        setServerPhoto(getPhoto);
+      }
+    })();
+  }, []);
+  const [visible, setVisible] = React.useState(false);
+
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);
 
   const [reviewLikes, setReviewLikes] = useState(likes);
 
@@ -127,6 +135,12 @@ export default function Review({
       flexDirection: 'row',
       alignItems: 'center',
     },
+    image: {
+      width: 100,
+      height: 100,
+      borderColor: 'red',
+      borderWidth: 1,
+    },
   });
 
   return (
@@ -178,6 +192,11 @@ export default function Review({
             ) : null}
           </View>
         </View>
+      </View>
+      <View>
+        {serverPhoto ? (
+          <Image source={{uri: serverPhoto.uri}} style={styles.image} />
+        ) : null}
       </View>
       <Divider />
     </>
