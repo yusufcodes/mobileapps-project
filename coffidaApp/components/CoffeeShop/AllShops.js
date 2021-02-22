@@ -12,6 +12,8 @@ export default function AllShops({navigation}) {
   useEffect(() => {
     async function response() {
       const token = await getToken();
+      console.log('TOKEN');
+      console.log(token);
       try {
         const response = await axios({
           method: 'get',

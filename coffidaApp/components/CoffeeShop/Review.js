@@ -25,12 +25,6 @@ export default function Review({
 
   const hideDialog = () => setVisible(false);
 
-  if (editable === true) {
-    console.log('Review: Can be edited');
-  } else {
-    console.log('Review: Cannot be edited');
-  }
-
   const {
     location_id,
     review_id,

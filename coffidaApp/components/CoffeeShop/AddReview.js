@@ -1,20 +1,12 @@
 import React, {useState} from 'react';
-import {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
-  Keyboard,
-  Image,
-} from 'react-native';
+import {View, Text, StyleSheet, Keyboard, Image} from 'react-native';
 import {Title, TextInput, IconButton} from 'react-native-paper';
-import UploadPhoto from './UploadPhoto';
 import Star from '../Global/Star';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import getToken from '../../functions/getToken';
 import getUser from '../../functions/network/getUser';
-import Camera from '../Global/Camera';
+import photoReview from '../../functions/network/photoReview';
 
 const styles = StyleSheet.create({
   root: {
@@ -38,25 +30,23 @@ export default function AddReview({route, navigation}) {
   const [quality, setQuality] = useState(0);
   const [clean, setClean] = useState(0);
   const [review, setReview] = useState('');
-  const [takePhoto, setTakePhoto] = useState(false);
-  const [photoUri, setPhotoUri] = useState(null);
+  const [photoData, setPhotoData] = useState(null);
 
   const handleOverall = (rating) => setOverall(rating);
   const handlePrice = (rating) => setPrice(rating);
   const handleQuality = (rating) => setQuality(rating);
   const handleClean = (rating) => setClean(rating);
 
-  // const handlePhoto = () =>
-  //   takePhoto ? setTakePhoto(false) : setTakePhoto(true);
-  const handlePhoto = () => navigation.navigate('UploadPhoto', {setPhotoUri});
+  const handlePhoto = () => navigation.navigate('UploadPhoto', {setPhotoData});
 
-  console.log(`photoUri: ${photoUri}`);
+  console.log(`photoData: ${photoData}`);
 
   const submitReview = async () => {
     console.log('Submitting Review...');
     Keyboard.dismiss();
     const token = await getToken();
 
+    // TODO: Abstract method
     const response = await axios({
       method: 'post',
       url: `http://10.0.2.2:3333/api/1.0.0/location/${id}/review`,
@@ -70,8 +60,14 @@ export default function AddReview({route, navigation}) {
         review_body: review,
       },
     }).then(async (response) => {
+      // Once review is submitted: check if we need to upload a photo
       if (response.status === 201) {
-        if (photoUri) {
+        showToast('Review submitted!');
+        console.log('Review submitted!');
+
+        // Only runs if a photo has been taken.
+        if (photoData) {
+          console.log('AddReview: Photo found, attempting to upload...');
           console.log('photo: getting user info');
           // .. do logic to add photo to review
           const userDetails = await getUser();
@@ -87,9 +83,21 @@ export default function AddReview({route, navigation}) {
 
           console.log('got user');
           console.log(`New Review ID: ${reviewToFind.review.review_id}`);
+
+          console.log('AddReview: Adding photo taken to the review...');
+          const uploadPhoto = await photoReview(
+            id,
+            reviewToFind.review.review_id,
+            photoData,
+          );
+          if (uploadPhoto.status === 200) {
+            console.log('AddReview: Photo successfully added to review');
+          }
+          console.log(
+            'AddReview: Review added with photo: navigating back now...',
+          );
         }
-        showToast('Review submitted!');
-        console.log('Review submitted!');
+
         navigation.goBack();
       }
     });
@@ -149,13 +157,10 @@ export default function AddReview({route, navigation}) {
           value={review}
           onChangeText={(review) => setReview(review)}
         />
-        <Button
-          text={takePhoto ? `Close Camera` : `Add Photo to Review`}
-          handler={handlePhoto}
-        />
+        <Button text="Add Photo To Review" handler={handlePhoto} />
         <Image
           source={{
-            uri: photoUri,
+            uri: photoData?.uri,
           }}
         />
 

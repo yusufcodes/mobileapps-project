@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Button} from 'react-native-paper';
@@ -17,12 +18,12 @@ const styles = StyleSheet.create({
 });
 class Camera extends Component {
   takePicture = async () => {
-    const {storeUri} = this.props;
+    const {storePhoto} = this.props;
     if (this.camera) {
       const options = {quality: 0.5, base64: true};
       const data = await this.camera.takePictureAsync(options);
-      storeUri(data.uri);
-      console.log(data.uri);
+      storePhoto(data);
+      // console.log(data.uri);
     }
   };
 
