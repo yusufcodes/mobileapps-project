@@ -18,7 +18,7 @@ export default function Pagination({
       justifyContent: 'center',
     },
   });
-
+  console.log(`Number of shops Pagination: ${numberOfShops}`);
   const totalPages = Math.ceil(numberOfShops / limit);
 
   return (

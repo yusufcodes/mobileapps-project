@@ -29,12 +29,14 @@ export default function AllShops({navigation}) {
     try {
       const responseTotalShops = await axios({
         method: 'get',
-        url: `http://10.0.2.2:3333/api/1.0.0/find`,
+        url: `http://10.0.2.2:3333/api/1.0.0/find?q=${searchQuery}&overall_rating=${overall}&price_rating=${price}&quality_rating=${quality}&clenliness_rating=${cleanliness}&search_in=${list}`,
         responseType: 'json',
         headers: {'X-Authorization': token},
       });
 
       setNumberOfShops(responseTotalShops?.data.length);
+      console.log(`Number of shops AllShops: ${numberOfShops}`);
+
       console.log(
         `AllShops: Performing request with values: limit = ${limit}, offset = ${offset}`,
       );
