@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {List, ActivityIndicator, Colors, Paragraph} from 'react-native-paper';
 import getToken from '../../functions/getToken';
 import Search from './Search';
+import Pagination from '../Global/Pagination';
 
 const axios = require('axios');
 
@@ -18,15 +19,29 @@ export default function AllShops({navigation}) {
   const [cleanliness, setCleanliness] = useState('');
   const [list, setList] = useState('');
   const [loading, setLoading] = useState(true);
+  const [limit, setLimit] = useState(2);
+  const [offset, setOffset] = useState(0);
+  const [numberOfShops, setNumberOfShops] = useState(0);
 
   const performSearch = async () => {
     setLoading(true);
     const token = await getToken();
     try {
+      const responseTotalShops = await axios({
+        method: 'get',
+        url: `http://10.0.2.2:3333/api/1.0.0/find`,
+        responseType: 'json',
+        headers: {'X-Authorization': token},
+      });
+
+      setNumberOfShops(responseTotalShops?.data.length);
+      console.log(
+        `AllShops: Performing request with values: limit = ${limit}, offset = ${offset}`,
+      );
       const response = await axios({
         method: 'get',
         url: `http://10.0.2.2:3333/api/1.0.0/find?q=${searchQuery}
-&overall_rating=${overall}&price_rating=${price}&quality_rating=${quality}&clenliness_rating=${cleanliness}&search_in=${list}`,
+&overall_rating=${overall}&price_rating=${price}&quality_rating=${quality}&clenliness_rating=${cleanliness}&search_in=${list}&limit=${limit}&offset=${offset}`,
         responseType: 'json',
         headers: {'X-Authorization': token},
       });
@@ -48,7 +63,7 @@ export default function AllShops({navigation}) {
 
   useEffect(() => {
     performSearch();
-  }, []);
+  }, [offset]);
 
   const outputShops = () => {
     if (loading) {
@@ -89,6 +104,13 @@ export default function AllShops({navigation}) {
         performSearch={performSearch}
       />
       {outputShops()}
+      <Pagination
+        limit={limit}
+        offset={offset}
+        setOffset={setOffset}
+        numberOfShops={numberOfShops}
+        performSearch={performSearch}
+      />
     </View>
   );
 }

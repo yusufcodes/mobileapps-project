@@ -136,7 +136,6 @@ export default function Search({
               </Picker>
             </Dialog.Content>
             <Dialog.Actions>
-              {/* <Button onPress={() => console.log('Cancel')}>Cancel</Button> */}
               <Button
                 onPress={() => {
                   hideDialog();
