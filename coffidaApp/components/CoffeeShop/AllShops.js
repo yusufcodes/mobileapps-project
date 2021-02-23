@@ -65,7 +65,7 @@ export default function AllShops({navigation}) {
 
   useEffect(() => {
     performSearch();
-  }, [offset]);
+  }, [offset, searchQuery]);
 
   const outputShops = () => {
     if (loading) {

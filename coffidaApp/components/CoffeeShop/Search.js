@@ -79,7 +79,7 @@ export default function Search({
     <View style={styles.root}>
       <Searchbar
         placeholder="Search"
-        onChangeText={onChangeSearch}
+        onChangeText={(searchQuery) => onChangeSearch(searchQuery)}
         value={searchQuery}
         style={styles.search}
       />
