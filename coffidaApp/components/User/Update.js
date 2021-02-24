@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
-import {Title, TextInput, Paragraph} from 'react-native-paper';
+import {Title, TextInput, Paragraph, HelperText} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
 import Button from '../Global/Button';
-import getToken from '../../functions/getToken';
-import getId from '../../functions/getId';
 import showToast from '../../functions/showToast';
-
-const axios = require('axios');
+import updateUser from '../../functions/network/updateUser';
+import checkValidEmail from '../../functions/checkValidEmail';
+import checkValidPassword from '../../functions/checkValidPassword';
 
 const styles = StyleSheet.create({
   root: {
@@ -17,42 +17,53 @@ const styles = StyleSheet.create({
   },
 });
 
+// TODO: Move password updating to a separate page?
+// TODO: Disable button if details are not valid
 export default function Update({route}) {
+  const globalNavigation = useNavigation();
   const {
     firstName: firstNameParam,
     lastName: lastNameParam,
     email: emailParam,
   } = route.params.details;
+
   const [firstName, setFirstName] = useState(firstNameParam);
   const [lastName, setLastName] = useState(lastNameParam);
   const [email, setEmail] = useState(emailParam);
+  const [validEmail, setValidEmail] = React.useState(true);
   const [password, setPassword] = useState('');
+  const [validPassword, setValidPassword] = React.useState(true);
+
+  useEffect(() => {
+    checkValidEmail(email, setValidEmail);
+    checkValidPassword(password, setValidPassword);
+  }, [email, password]);
 
   const updateHandler = async () => {
     Keyboard.dismiss();
-    const token = await getToken();
-    const id = await getId();
-    try {
-      console.log(`Last name being submitted: ${lastName}`);
-      const response = await axios({
-        method: 'patch',
-        url: `http://10.0.2.2:3333/api/1.0.0/user/${parseInt(id)}`,
-        responseType: 'json',
-        headers: {'X-Authorization': token},
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          password,
-        },
-      });
-      if (response?.status === 200) {
-        showToast('Details successfully updated!');
-      } else {
-        showToast('Oops, we ran into an issue here. Please try again.');
-      }
-    } catch (error) {
-      console.log(error);
+
+    // Constructing data for PATCH request based on the data that the user changes
+    const data = {};
+
+    if (firstName !== firstNameParam) {
+      data.first_name = firstName;
+    }
+    if (lastName !== lastNameParam) {
+      data.last_name = lastName;
+    }
+    if (email !== emailParam) {
+      data.email = email;
+    }
+    if (password.length > 0) {
+      data.password = password;
+    }
+
+    const response = await updateUser(data);
+    if (response?.status === 200) {
+      showToast('Details successfully updated!');
+      globalNavigation.goBack();
+    } else {
+      showToast('Oops, we ran into an issue here. Please try again.');
     }
   };
   return (
@@ -74,16 +85,26 @@ export default function Update({route}) {
         label="Email"
         value={email}
         mode="outlined"
-        onChangeText={(email) => setEmail(email)}
+        error={!validEmail && email.length > 0}
+        onChangeText={(email) => {
+          setEmail(email);
+        }}
       />
-      {/* TODO: Remove password from here */}
+      <HelperText type="error" visible={!validEmail && email.length > 0}>
+        Please enter a valid email address
+      </HelperText>
       <TextInput
+        secureTextEntry
         label="Password"
         value={password}
         mode="outlined"
-        secureTextEntry
+        error={!validPassword && password.length > 0}
         onChangeText={(password) => setPassword(password)}
       />
+      <HelperText type="error" visible={!validPassword && password.length > 0}>
+        Please enter a password with more than five characters
+      </HelperText>
+      {/* TODO: Disable button if details are not valid */}
       <Button text="Confirm Details" handler={updateHandler} />
       <Paragraph>Want to update your password? Click below</Paragraph>
       <Button

@@ -28,11 +28,13 @@ const styles = StyleSheet.create({
   },
 });
 
+// TODO: Use loading boolean for everything, not just user
 export default function User({navigation}) {
   const globalNavigation = useNavigation();
 
   // State values storing user details
   const [details, setDetails] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
   const [locations, setLocations] = useState(null);
   const [reviews, setReviews] = useState(null);
   const [likedReviews, setLikedReviews] = useState(null);
@@ -47,6 +49,7 @@ export default function User({navigation}) {
 
   const displayUpdate = () => navigation.navigate('Update', {details});
   const performGetUser = async () => {
+    setLoadingDetails(true);
     const response = await getUser();
     if (response?.status !== 200) {
       if (response?.status === 401) {
@@ -80,6 +83,7 @@ export default function User({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       (async function () {
+        setLoadingDetails(true);
         const response = await performGetUser();
 
         const {
@@ -95,6 +99,7 @@ export default function User({navigation}) {
           firstName: first_name,
           lastName: last_name,
         });
+        setLoadingDetails(false);
         setLocations(favourite_locations);
         setReviews(reviews);
         setLikedReviews(liked_reviews);
@@ -125,7 +130,7 @@ export default function User({navigation}) {
       <Title style={styles.heading}>My Profile</Title>
       <View style={styles.details}>
         <Title>Personal Details</Title>
-        {details ? (
+        {details && !loadingDetails ? (
           <>
             <View style={styles.singleDetail}>
               <Paragraph style={{fontWeight: 'bold'}}>First Name: </Paragraph>
