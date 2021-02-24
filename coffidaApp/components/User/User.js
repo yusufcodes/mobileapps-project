@@ -3,7 +3,6 @@ import {View, StyleSheet, ScrollView} from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
   Title,
-  Subheading,
   Paragraph,
   List,
   Dialog,
@@ -15,6 +14,7 @@ import getUser from '../../functions/network/getUser';
 import Review from '../CoffeeShop/Review';
 import logout from '../../functions/network/logout';
 import showToast from '../../functions/showToast';
+import Loader from '../Global/Loader';
 
 const styles = StyleSheet.create({
   root: {
@@ -31,23 +31,37 @@ const styles = StyleSheet.create({
 export default function User({navigation}) {
   const globalNavigation = useNavigation();
 
-  const [details, setDetails] = useState({});
-  const [locations, setLocations] = useState([]);
-  const [reviews, setReviews] = useState([]);
-  const [likedReviews, setLikedReviews] = useState([]);
+  // State values storing user details
+  const [details, setDetails] = useState(null);
+  const [locations, setLocations] = useState(null);
+  const [reviews, setReviews] = useState(null);
+  const [likedReviews, setLikedReviews] = useState(null);
+
+  // State values related to authorisation
   const [loggedOut, setLoggedOut] = useState(false);
   const [errorLogOut, setErrorLogOut] = useState(false);
 
   const [visible, setVisible] = React.useState(false);
-  const hideDialog = () => setVisible(false);
-  const showDialog = () => setVisible(true);
+  const hideLogoutDialog = () => setVisible(false);
+  const showLogoutDialog = () => setVisible(true);
 
   const displayUpdate = () => navigation.navigate('Update', {details});
-
-  // TODO: Error handling
-  const refreshReviews = async () => {
-    console.log('Refreshing reviews...');
+  const performGetUser = async () => {
     const response = await getUser();
+    if (response?.status !== 200) {
+      if (response?.status === 401) {
+        console.log('User not logged in');
+        globalNavigation.navigate('Sign Up');
+      } else {
+        showToast("Sorry, we couldn't fetch your information.");
+      }
+      return;
+    }
+    return response;
+  };
+
+  const refreshReviews = async () => {
+    const response = await performGetUser();
     const {reviews} = response?.data;
     setReviews(reviews);
   };
@@ -55,7 +69,7 @@ export default function User({navigation}) {
   useEffect(() => {
     if (loggedOut) {
       console.log('User: User is now logged out, navigating...');
-      hideDialog();
+      hideLogoutDialog();
       globalNavigation.navigate('Sign Up');
     }
     if (errorLogOut) {
@@ -66,7 +80,8 @@ export default function User({navigation}) {
   useFocusEffect(
     React.useCallback(() => {
       (async function () {
-        const response = await getUser();
+        const response = await performGetUser();
+
         const {
           email,
           first_name,
@@ -90,10 +105,12 @@ export default function User({navigation}) {
   return (
     <ScrollView style={styles.root}>
       <Portal>
-        <Dialog visible={visible} onDismiss={hideDialog}>
+        <Dialog visible={visible} onDismiss={hideLogoutDialog}>
           <Dialog.Title>Are you sure you want to log out?</Dialog.Title>
           <Dialog.Actions>
-            <DialogButton onPress={() => hideDialog()}>Cancel</DialogButton>
+            <DialogButton onPress={() => hideLogoutDialog()}>
+              Cancel
+            </DialogButton>
             <DialogButton
               onPress={() => {
                 setLoggedOut(false);
@@ -107,55 +124,50 @@ export default function User({navigation}) {
       </Portal>
       <Title style={styles.heading}>My Profile</Title>
       <View style={styles.details}>
-        <Subheading>Personal Details</Subheading>
-
-        <View style={styles.singleDetail}>
-          <Paragraph style={{fontWeight: 'bold'}}>First Name: </Paragraph>
-          <Paragraph>{details?.firstName}</Paragraph>
-        </View>
-        <View style={styles.singleDetail}>
-          <Paragraph style={{fontWeight: 'bold'}}>Last Name: </Paragraph>
-          <Paragraph>{details?.lastName}</Paragraph>
-        </View>
-        <View style={styles.singleDetail}>
-          <Paragraph style={{fontWeight: 'bold'}}>Email: </Paragraph>
-          <Paragraph>{details?.email}</Paragraph>
-        </View>
+        <Title>Personal Details</Title>
+        {details ? (
+          <>
+            <View style={styles.singleDetail}>
+              <Paragraph style={{fontWeight: 'bold'}}>First Name: </Paragraph>
+              <Paragraph>{details?.firstName}</Paragraph>
+            </View>
+            <View style={styles.singleDetail}>
+              <Paragraph style={{fontWeight: 'bold'}}>Last Name: </Paragraph>
+              <Paragraph>{details?.lastName}</Paragraph>
+            </View>
+            <View style={styles.singleDetail}>
+              <Paragraph style={{fontWeight: 'bold'}}>Email: </Paragraph>
+              <Paragraph>{details?.email}</Paragraph>
+            </View>
+          </>
+        ) : (
+          <Loader size="large" />
+        )}
       </View>
       <Button text="Update Details" handler={displayUpdate} />
-      <Button text="Logout" handler={showDialog} />
+      <Button text="Logout" handler={showLogoutDialog} />
       <Title>My Liked Locations</Title>
-      {locations.map((item, index) => (
-        <List.Item
-          key={index}
-          title={`${item?.location_name}`}
-          description={`Town: ${item?.location_town} \nRating: ${item?.avg_overall_rating}`}
-          descriptionNumberOfLines={2}
-          left={(props) => <List.Icon {...props} icon="coffee" />}
-          onPress={() => navigation.navigate('Shop', {id: item?.location_id})}
-        />
-      ))}
+      {locations ? (
+        locations.map((item, index) => (
+          <List.Item
+            key={index}
+            title={`${item?.location_name}`}
+            description={`Town: ${item?.location_town} \nRating: ${item?.avg_overall_rating}`}
+            descriptionNumberOfLines={2}
+            left={(props) => <List.Icon {...props} icon="coffee" />}
+            onPress={() => navigation.navigate('Shop', {id: item?.location_id})}
+          />
+        ))
+      ) : (
+        <Loader size="large" />
+      )}
+
       <Title>My Reviews</Title>
-      {reviews.map(
-        (
-          {
-            review: {
-              review_id,
-              review_body,
-              overall_rating,
-              price_rating,
-              quality_rating,
-              clenliness_rating,
-              likes,
-            },
-            location: {location_id},
-          },
-          index,
-        ) => (
-          <View key={index}>
-            <Review
-              details={{
-                location_id,
+      {reviews ? (
+        reviews.map(
+          (
+            {
+              review: {
                 review_id,
                 review_body,
                 overall_rating,
@@ -163,43 +175,66 @@ export default function User({navigation}) {
                 quality_rating,
                 clenliness_rating,
                 likes,
-              }}
-              editable
-              navigation={navigation}
-              refreshReviews={refreshReviews}
-            />
-          </View>
-        ),
+              },
+              location: {location_id},
+            },
+            index,
+          ) => (
+            <View key={index}>
+              <Review
+                details={{
+                  location_id,
+                  review_id,
+                  review_body,
+                  overall_rating,
+                  price_rating,
+                  quality_rating,
+                  clenliness_rating,
+                  likes,
+                }}
+                editable
+                navigation={navigation}
+                refreshReviews={refreshReviews}
+              />
+            </View>
+          ),
+        )
+      ) : (
+        <Loader size="large" />
       )}
 
       <Title>My Liked Reviews</Title>
-      {likedReviews.map(
-        (
-          {
-            review: {
-              review_body,
-              overall_rating,
-              price_rating,
-              quality_rating,
-              clenliness_rating,
-              likes,
-            },
-          },
-          index,
-        ) => (
-          <View key={index}>
-            <Review
-              details={{
+      {likedReviews ? (
+        likedReviews.map(
+          (
+            {
+              review: {
                 review_body,
                 overall_rating,
                 price_rating,
                 quality_rating,
                 clenliness_rating,
                 likes,
-              }}
-            />
-          </View>
-        ),
+              },
+            },
+            index,
+          ) => (
+            <View key={index}>
+              <Review
+                details={{
+                  review_body,
+                  overall_rating,
+                  price_rating,
+                  quality_rating,
+                  clenliness_rating,
+                  likes,
+                }}
+              />
+            </View>
+          ),
+        )
+      ) : (
+        <Loader size="large" />
       )}
     </ScrollView>
   );
