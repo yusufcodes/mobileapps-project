@@ -19,10 +19,10 @@ export default async function login(
         password,
       },
     });
-    if (response.status === 200) {
+    if (response?.status === 200) {
       console.log('login: Successfully logged user in');
-      storeData('token', response.data.token);
-      storeData('id', response.data.id.toString());
+      storeData('token', response?.data.token);
+      storeData('id', response?.data.id.toString());
       setLoggedIn(true);
     } else {
       setLoginError(true);

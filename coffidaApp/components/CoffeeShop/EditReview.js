@@ -65,7 +65,7 @@ export default function EditReview({route, navigation}) {
           review_body: review,
         },
       });
-      if (response.status === 200) {
+      if (response?.status === 200) {
         showToast('Review edited!');
         console.log('Review edited!');
         navigation.goBack();

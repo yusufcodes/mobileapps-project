@@ -46,7 +46,7 @@ export default function Update({route}) {
           password,
         },
       });
-      if (response.status === 200) {
+      if (response?.status === 200) {
         showToast('Details successfully updated!');
       } else {
         showToast('Oops, we ran into an issue here. Please try again.');

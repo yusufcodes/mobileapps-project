@@ -2,7 +2,7 @@ import getToken from '../getToken';
 
 const axios = require('axios');
 
-export default async function logout() {
+export default async function logout(setLoggedOut, setErrorLogOut) {
   console.log('logout: Running...');
   const token = await getToken();
 
@@ -13,19 +13,20 @@ export default async function logout() {
       responseType: 'json',
       headers: {'X-Authorization': token},
     });
-    if (response.status === 200) {
-      console.log('Logout: Successful - returning response...');
+    if (response?.status === 200) {
+      setLoggedOut(true);
       return response;
     }
-    if (response.status === 401) {
-      console.log('Logout: Unauthorised');
-      return null;
+    if (response?.status === 401) {
+      setErrorLogOut(true);
+      return response;
     }
-    if (response.status === 500) {
-      console.log('Logout: Server Error');
-      return null;
+    if (response?.status === 500) {
+      setErrorLogOut(true);
+      return response;
     }
   } catch (error) {
-    console.log(`Logout error: ${error}`);
+    setErrorLogOut(true);
+    console.log(`Logout: ${error}`);
   }
 }

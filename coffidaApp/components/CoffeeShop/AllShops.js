@@ -48,7 +48,7 @@ export default function AllShops({navigation}) {
         headers: {'X-Authorization': token},
       });
 
-      const arrayOfShops = response.data.map((item) => ({
+      const arrayOfShops = response?.data.map((item) => ({
         id: item.location_id,
         name: item.location_name,
         town: item.location_town,
@@ -59,6 +59,11 @@ export default function AllShops({navigation}) {
       setLoading(false);
       setShops(arrayOfShops);
     } catch (error) {
+      if (error.response?.status === 401) {
+        console.log('User not signed in - redirecting to Sign Up...');
+        navigation.navigate('Sign Up');
+      }
+
       console.log(error);
     }
   };

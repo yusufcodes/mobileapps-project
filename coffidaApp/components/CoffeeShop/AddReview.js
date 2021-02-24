@@ -61,7 +61,7 @@ export default function AddReview({route, navigation}) {
       },
     }).then(async (response) => {
       // Once review is submitted: check if we need to upload a photo
-      if (response.status === 201) {
+      if (response?.status === 201) {
         showToast('Review submitted!');
         console.log('Review submitted!');
 

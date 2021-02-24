@@ -63,7 +63,7 @@ export default function Review({
   const getLikes = async () => {
     console.log('getLikes: Running...');
     const response = await getLocation(location_id);
-    const {location_reviews: reviews} = response.data;
+    const {location_reviews: reviews} = response?.data;
     const review = reviews.find(
       (currentReview) => currentReview.review_id === review_id,
     );
@@ -149,7 +149,7 @@ export default function Review({
     console.log('AddReview: Adding photo taken to the review...');
     const deletePhoto = true;
     const response = await photoReview(location_id, review_id, deletePhoto);
-    if (response.status === 200) {
+    if (response?.status === 200) {
       console.log('Review: Photo successfully deleted');
       console.log(serverPhoto.uri);
       deletePhotoFile();

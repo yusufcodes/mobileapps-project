@@ -20,7 +20,7 @@ export default async function createUser(
         password,
       },
     });
-    if (response.status === 201) {
+    if (response?.status === 201) {
       console.log('createUser: Account successfully created');
       setAccountCreated(true);
     } else {

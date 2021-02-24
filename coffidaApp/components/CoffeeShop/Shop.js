@@ -20,7 +20,7 @@ export default function Shop({route, navigation}) {
       avg_quality_rating: qualityRating,
       avg_clenliness_rating: cleanlinessRating,
       location_reviews: reviews,
-    } = response.data;
+    } = response?.data;
 
     setShop({
       location_id,
