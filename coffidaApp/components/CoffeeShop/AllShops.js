@@ -7,6 +7,7 @@ import Pagination from '../Global/Pagination';
 
 const axios = require('axios');
 
+// TODO: useFocusEffect like in User to reload the data.
 export default function AllShops({navigation}) {
   const [shops, setShops] = useState([]);
 
