@@ -1,48 +1,53 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, StyleSheet, ToastAndroid, Keyboard} from 'react-native';
-import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
+import {
+  TextInput,
+  Headline,
+  Subheading,
+  Button,
+  HelperText,
+} from 'react-native-paper';
 import showToast from '../../functions/showToast';
-
-const axios = require('axios');
+import createUser from '../../functions/network/createUser';
 
 export default function SignUp({navigation}) {
-  navigation.setOptions({tabBarVisible: false});
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
+  const [validEmail, setValidEmail] = React.useState(true);
   const [password, setPassword] = React.useState('');
+  const [validPassword, setValidPassword] = React.useState(true);
   const [accountCreated, setAccountCreated] = React.useState(false);
 
-  const createUser = async () => {
+  const performCreateUser = async () => {
     Keyboard.dismiss();
-    const response = await axios
-      .post('http://10.0.2.2:3333/api/1.0.0/user', {
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        password,
-      })
-      .then(
-        (response) => {
-          //   console.log(response.data); // {"id": 24}
-          //   console.log(response.status); // 201
-          //   console.log(response.statusText);
-          //   console.log(response.headers);
-          //   console.log(response.config);
-          // },
-          if (response.status === 201) {
-            // Display Toast to the user
-            showToast(
-              `${firstName}, your account has successfully been created!`,
-            );
-            setAccountCreated(true);
-          }
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
+    // Validation inside this file ?
+    await createUser(firstName, lastName, email, password, setAccountCreated);
   };
+
+  // Perform regex
+  const checkValidEmail = (email) => {
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if (valid) {
+      setValidEmail(true);
+    } else {
+      setValidEmail(false);
+    }
+  };
+
+  const checkValidPassword = (password) => {
+    const valid = password.length > 5;
+    if (valid) {
+      setValidPassword(true);
+    } else {
+      setValidPassword(false);
+    }
+  };
+
+  useEffect(() => {
+    checkValidEmail(email);
+    checkValidPassword(password);
+  }, [email, password]);
 
   const styles = StyleSheet.create({
     container: {
@@ -60,32 +65,57 @@ export default function SignUp({navigation}) {
         label="First Name"
         value={firstName}
         mode="outlined"
+        // error={firstName.length < 2}
         onChangeText={(firstName) => setFirstName(firstName)}
       />
+      {/* <HelperText type="error" visible={firstName.length < 2}>
+        Please enter your first name
+      </HelperText> */}
       <TextInput
         label="Last Name"
         value={lastName}
         mode="outlined"
+        // error={lastName.length < 2}
         onChangeText={(lastName) => setLastName(lastName)}
       />
+      {/* <HelperText type="error" visible={lastName.length < 2}>
+        Please enter your last name
+      </HelperText> */}
       <TextInput
         label="Email"
         value={email}
         mode="outlined"
-        onChangeText={(email) => setEmail(email)}
+        error={!validEmail && email.length > 0}
+        onChangeText={(email) => {
+          setEmail(email);
+        }}
       />
+      <HelperText type="error" visible={!validEmail && email.length > 0}>
+        Please enter a valid email address
+      </HelperText>
+      {/* Validation */}
       <TextInput
         secureTextEntry
         label="Password"
         value={password}
         mode="outlined"
+        error={!validPassword && password.length > 0}
         onChangeText={(password) => setPassword(password)}
       />
+      <HelperText type="error" visible={!validPassword && password.length > 0}>
+        Please enter a password with more than five characters
+      </HelperText>
       <Button
         uppercase
         accessibilityLabel="Sign up for an account"
         mode="contained"
-        onPress={() => createUser()}>
+        disabled={
+          !validEmail ||
+          !validPassword ||
+          firstName.length < 2 ||
+          lastName.length < 2
+        }
+        onPress={() => performCreateUser()}>
         Sign up
       </Button>
       <Subheading
@@ -99,7 +129,6 @@ export default function SignUp({navigation}) {
         accessibilityLabel="Login to existing account"
         mode="contained"
         onPress={() => {
-          console.log('Login: pressed');
           navigation.navigate('Log In');
         }}>
         Login
