@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 const axios = require('axios');
 
 export default async function createUser(
@@ -10,12 +9,6 @@ export default async function createUser(
   setSignupError,
 ) {
   try {
-    console.log(firstName);
-    console.log(lastName);
-    console.log(email);
-    console.log(password);
-    console.log(setAccountCreated);
-    console.log(setSignupError);
     const response = await axios({
       method: 'post',
       url: 'http://10.0.2.2:3333/api/1.0.0/user',

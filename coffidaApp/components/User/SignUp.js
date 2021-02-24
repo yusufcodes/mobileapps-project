@@ -9,6 +9,8 @@ import {
 } from 'react-native-paper';
 import showToast from '../../functions/showToast';
 import createUser from '../../functions/network/createUser';
+import checkValidEmail from '../../functions/checkValidEmail';
+import checkValidPassword from '../../functions/checkValidPassword';
 
 export default function SignUp({navigation}) {
   const [firstName, setFirstName] = React.useState('');
@@ -33,28 +35,10 @@ export default function SignUp({navigation}) {
     );
   };
 
-  const checkValidEmail = (email) => {
-    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    if (valid) {
-      setValidEmail(true);
-    } else {
-      setValidEmail(false);
-    }
-  };
-
-  const checkValidPassword = (password) => {
-    const valid = password.length > 5;
-    if (valid) {
-      setValidPassword(true);
-    } else {
-      setValidPassword(false);
-    }
-  };
-
   // Perform input checks each time the user enters either their email or password
   useEffect(() => {
-    checkValidEmail(email);
-    checkValidPassword(password);
+    checkValidEmail(email, setValidEmail);
+    checkValidPassword(password, setValidPassword);
   }, [email, password]);
 
   // Listen for changes in boolean values for creating an account + display relevant toast

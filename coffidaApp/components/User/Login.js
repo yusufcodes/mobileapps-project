@@ -1,14 +1,47 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
-import {TextInput, Headline, Subheading, Button} from 'react-native-paper';
+import {
+  TextInput,
+  Headline,
+  Subheading,
+  Button,
+  HelperText,
+} from 'react-native-paper';
 import showToast from '../../functions/showToast';
-import storeData from '../../functions/storeData';
-
-const axios = require('axios');
+import checkValidEmail from '../../functions/checkValidEmail';
+import checkValidPassword from '../../functions/checkValidPassword';
+import login from '../../functions/network/login';
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState('');
+  const [validEmail, setValidEmail] = React.useState(true);
   const [password, setPassword] = React.useState('');
+  const [validPassword, setValidPassword] = React.useState(true);
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [invalidLogin, setInvalidLogin] = React.useState(false);
+  const [loginError, setLoginError] = React.useState(false);
+
+  // Perform input checks each time the user enters either their email or password
+  useEffect(() => {
+    checkValidEmail(email, setValidEmail);
+    checkValidPassword(password, setValidPassword);
+  }, [email, password]);
+
+  // Listen for changes in boolean values for logging in + display relevant toast
+  useEffect(() => {
+    if (loggedIn) {
+      showToast('Login successful');
+      navigation.navigate('Main');
+    }
+    if (invalidLogin) {
+      showToast('Incorrect email / password supplied, please try again.');
+    }
+    if (loginError) {
+      showToast(
+        'Oops, looks like there was an issue logging you in. Please try again.',
+      );
+    }
+  }, [loggedIn, loginError, invalidLogin]);
 
   const styles = StyleSheet.create({
     container: {
@@ -24,27 +57,11 @@ export default function Login({navigation}) {
     },
   });
 
-  const login = async () => {
+  const performLogin = async () => {
     Keyboard.dismiss();
-    const response = await axios
-      .post('http://10.0.2.2:3333/api/1.0.0/user/login', {
-        email,
-        password,
-      })
-      .then(
-        (response) => {
-          if (response.status === 200) {
-            storeData('token', response.data.token);
-            storeData('id', response.data.id.toString());
-            showToast('Login Successful!');
-            navigation.navigate('Main');
-          }
-        },
-        (error) => {
-          showToast('Incorrect email or password, please try again.');
-          console.log(`login: Error - ${error}`);
-        },
-      );
+    setLoginError(false);
+    setInvalidLogin(false);
+    await login(email, password, setLoggedIn, setLoginError, setInvalidLogin);
   };
 
   return (
@@ -58,20 +75,33 @@ export default function Login({navigation}) {
           label="Email"
           value={email}
           mode="outlined"
-          onChangeText={(email) => setEmail(email)}
+          error={!validEmail && email.length > 0}
+          onChangeText={(email) => {
+            setEmail(email);
+          }}
         />
+        <HelperText type="error" visible={!validEmail && email.length > 0}>
+          Please enter a valid email address
+        </HelperText>
         <TextInput
           secureTextEntry
           label="Password"
           value={password}
           mode="outlined"
+          error={!validPassword && password.length > 0}
           onChangeText={(password) => setPassword(password)}
         />
+        <HelperText
+          type="error"
+          visible={!validPassword && password.length > 0}>
+          Please enter a password with more than five characters
+        </HelperText>
         <Button
           uppercase
-          accessibilityLabel="Log in to an existing account"
+          accessibilityLabel="Log in to an existing accoueent"
           mode="contained"
-          onPress={() => login()}>
+          disabled={!validEmail || !validPassword}
+          onPress={() => performLogin()}>
           Log In
         </Button>
       </View>
