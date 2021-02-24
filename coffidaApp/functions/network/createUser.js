@@ -1,33 +1,40 @@
-import showToast from '../showToast';
-
+import React, {useState} from 'react';
 const axios = require('axios');
 
-export default async function createUser({
+export default async function createUser(
   firstName,
   lastName,
   email,
   password,
   setAccountCreated,
-}) {
-  const response = await axios
-    .post('http://10.0.2.2:3333/api/1.0.0/user', {
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      password,
-    })
-    .then(
-      (response) => {
-        if (response.status === 201) {
-          // Display Toast to the user
-          showToast(
-            `${firstName}, your account has successfully been created!`,
-          );
-          setAccountCreated(true);
-        }
+  setSignupError,
+) {
+  try {
+    console.log(firstName);
+    console.log(lastName);
+    console.log(email);
+    console.log(password);
+    console.log(setAccountCreated);
+    console.log(setSignupError);
+    const response = await axios({
+      method: 'post',
+      url: 'http://10.0.2.2:3333/api/1.0.0/user',
+      responseType: 'json',
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        password,
       },
-      (error) => {
-        console.log(error);
-      },
-    );
+    });
+    if (response.status === 201) {
+      console.log('createUser: Account successfully created');
+      setAccountCreated(true);
+    } else {
+      setSignupError(true);
+    }
+  } catch (e) {
+    setSignupError(true);
+    console.log(e);
+  }
 }

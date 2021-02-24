@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, ToastAndroid, Keyboard} from 'react-native';
+import {View, StyleSheet, Keyboard} from 'react-native';
 import {
   TextInput,
   Headline,
@@ -18,14 +18,21 @@ export default function SignUp({navigation}) {
   const [password, setPassword] = React.useState('');
   const [validPassword, setValidPassword] = React.useState(true);
   const [accountCreated, setAccountCreated] = React.useState(false);
+  const [signupError, setSignupError] = React.useState(false);
 
   const performCreateUser = async () => {
     Keyboard.dismiss();
-    // Validation inside this file ?
-    await createUser(firstName, lastName, email, password, setAccountCreated);
+    setSignupError(false);
+    await createUser(
+      firstName,
+      lastName,
+      email,
+      password,
+      setAccountCreated,
+      setSignupError,
+    );
   };
 
-  // Perform regex
   const checkValidEmail = (email) => {
     const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     if (valid) {
@@ -44,16 +51,88 @@ export default function SignUp({navigation}) {
     }
   };
 
+  // Perform input checks each time the user enters either their email or password
   useEffect(() => {
     checkValidEmail(email);
     checkValidPassword(password);
   }, [email, password]);
 
+  // Listen for changes in boolean values for creating an account + display relevant toast
+  useEffect(() => {
+    if (accountCreated) {
+      showToast('Account successfully created');
+    }
+    if (signupError) {
+      showToast(
+        'Oops, looks like there was an issue making your account. Please try again.',
+      );
+    }
+  }, [accountCreated, signupError]);
+
+  // TODO: Styles
   const styles = StyleSheet.create({
     container: {
       padding: 50,
     },
   });
+
+  // Conditionally rendering button output depending on if the user created an account
+  const renderButtons = () => {
+    let components = (
+      <>
+        <Button
+          uppercase
+          accessibilityLabel="Sign up for an account"
+          mode="contained"
+          disabled={
+            !validEmail ||
+            !validPassword ||
+            firstName.length < 2 ||
+            lastName.length < 2
+          }
+          onPress={() => performCreateUser()}>
+          Create Account
+        </Button>
+        <Subheading
+          style={{
+            textAlign: 'center',
+          }}>
+          Already have an account?
+        </Subheading>
+        <Button
+          uppercase
+          accessibilityLabel="Login to existing account"
+          mode="contained"
+          onPress={() => {
+            navigation.navigate('Log In');
+          }}>
+          Login
+        </Button>
+      </>
+    );
+    if (accountCreated) {
+      components = (
+        <>
+          <Subheading
+            style={{
+              textAlign: 'center',
+            }}>
+            Account created - proceed to login
+          </Subheading>
+          <Button
+            uppercase
+            accessibilityLabel="Login to existing account"
+            mode="contained"
+            onPress={() => {
+              navigation.navigate('Log In');
+            }}>
+            Login
+          </Button>
+        </>
+      );
+    }
+    return components;
+  };
 
   return (
     <View style={styles.container}>
@@ -65,22 +144,14 @@ export default function SignUp({navigation}) {
         label="First Name"
         value={firstName}
         mode="outlined"
-        // error={firstName.length < 2}
         onChangeText={(firstName) => setFirstName(firstName)}
       />
-      {/* <HelperText type="error" visible={firstName.length < 2}>
-        Please enter your first name
-      </HelperText> */}
       <TextInput
         label="Last Name"
         value={lastName}
         mode="outlined"
-        // error={lastName.length < 2}
         onChangeText={(lastName) => setLastName(lastName)}
       />
-      {/* <HelperText type="error" visible={lastName.length < 2}>
-        Please enter your last name
-      </HelperText> */}
       <TextInput
         label="Email"
         value={email}
@@ -93,7 +164,6 @@ export default function SignUp({navigation}) {
       <HelperText type="error" visible={!validEmail && email.length > 0}>
         Please enter a valid email address
       </HelperText>
-      {/* Validation */}
       <TextInput
         secureTextEntry
         label="Password"
@@ -105,34 +175,7 @@ export default function SignUp({navigation}) {
       <HelperText type="error" visible={!validPassword && password.length > 0}>
         Please enter a password with more than five characters
       </HelperText>
-      <Button
-        uppercase
-        accessibilityLabel="Sign up for an account"
-        mode="contained"
-        disabled={
-          !validEmail ||
-          !validPassword ||
-          firstName.length < 2 ||
-          lastName.length < 2
-        }
-        onPress={() => performCreateUser()}>
-        Sign up
-      </Button>
-      <Subheading
-        style={{
-          textAlign: 'center',
-        }}>
-        Already have an account?
-      </Subheading>
-      <Button
-        uppercase
-        accessibilityLabel="Login to existing account"
-        mode="contained"
-        onPress={() => {
-          navigation.navigate('Log In');
-        }}>
-        Login
-      </Button>
+      {renderButtons()}
     </View>
   );
 }
