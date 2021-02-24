@@ -43,6 +43,7 @@ export default function Login({navigation}) {
     }
   }, [loggedIn, loginError, invalidLogin]);
 
+  // TODO: Styles
   const styles = StyleSheet.create({
     container: {
       padding: 50,

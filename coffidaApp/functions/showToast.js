@@ -5,8 +5,8 @@ const showToast = (text) => {
     text,
     ToastAndroid.LONG,
     ToastAndroid.BOTTOM,
-    25,
-    50,
+    40,
+    60,
   );
 };
 
