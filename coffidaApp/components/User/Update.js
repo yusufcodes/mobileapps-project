@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
-import {Title, TextInput} from 'react-native-paper';
+import {Title, TextInput, Paragraph} from 'react-native-paper';
 import Button from '../Global/Button';
 import getToken from '../../functions/getToken';
 import getId from '../../functions/getId';
@@ -76,6 +76,7 @@ export default function Update({route}) {
         mode="outlined"
         onChangeText={(email) => setEmail(email)}
       />
+      {/* TODO: Remove password from here */}
       <TextInput
         label="Password"
         value={password}
@@ -84,6 +85,11 @@ export default function Update({route}) {
         onChangeText={(password) => setPassword(password)}
       />
       <Button text="Confirm Details" handler={updateHandler} />
+      <Paragraph>Want to update your password? Click below</Paragraph>
+      <Button
+        text="Change Password"
+        handler={() => console.log('Go to new password reset page')}
+      />
     </View>
   );
 }
