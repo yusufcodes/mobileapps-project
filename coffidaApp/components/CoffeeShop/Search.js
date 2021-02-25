@@ -8,10 +8,8 @@ import {
   Portal,
   Paragraph,
   Button,
-  Subheading,
   Divider,
   Title,
-  Headline,
 } from 'react-native-paper';
 import commonStyles from '../../styles/commonStyles';
 

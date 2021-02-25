@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import {View} from 'react-native';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
@@ -18,7 +17,7 @@ const theme = {
   roundness: 2,
   colors: {
     ...PaperTheme.colors,
-    primary: '#53433A', //tint color
+    primary: '#53433A',
     accent: '#f1c40f', // secondary
     // background:
     // surface:
