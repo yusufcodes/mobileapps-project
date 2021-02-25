@@ -1,10 +1,15 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Keyboard} from 'react-native';
-import {Title, TextInput, IconButton} from 'react-native-paper';
+import {View, Text, StyleSheet, Keyboard, Image} from 'react-native';
+import {Title, TextInput, IconButton, HelperText} from 'react-native-paper';
+import RNFS from 'react-native-fs';
 import Star from '../Global/Star';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import getToken from '../../functions/getToken';
+import photoReview from '../../functions/network/photoReview';
+import profanityFilter from '../../functions/profanityFilter';
+import updateReview from '../../functions/network/updateReview';
+import DeleteButton from '../Global/DeleteButton';
 
 const styles = StyleSheet.create({
   root: {
@@ -15,14 +20,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  image: {
+    width: 100,
+    height: 100,
+  },
 });
 
 const axios = require('axios');
 
 export default function EditReview({route, navigation}) {
-  //   const {id} = route.params;
-  //   console.log(id);
-  const id = 0; // TODO: change this
   const {
     location_id,
     review_id,
@@ -31,49 +37,110 @@ export default function EditReview({route, navigation}) {
     price_rating,
     quality_rating,
     clenliness_rating,
+    serverPhoto,
   } = route.params;
-  console.log(route.params);
 
-  // TODO: Populate these with values passed in via state
   const [overall, setOverall] = useState(overall_rating);
   const [price, setPrice] = useState(price_rating);
   const [quality, setQuality] = useState(quality_rating);
   const [clean, setClean] = useState(clenliness_rating);
   const [review, setReview] = React.useState(review_body);
+  const [validReview, setValidReview] = useState(true);
+
+  const [isPhotoDeleted, setIsPhotoDeleted] = useState(false);
+
+  // State to check if values from profanity filter are mentioned
+  const [isProfanity, setIsProfanity] = useState(false);
+
+  // Photo state to determine if the user has attached a photo
+  const [photoData, setPhotoData] = useState(serverPhoto);
 
   const handleOverall = (rating) => setOverall(rating);
   const handlePrice = (rating) => setPrice(rating);
   const handleQuality = (rating) => setQuality(rating);
   const handleClean = (rating) => setClean(rating);
 
-  // TODO: Change endpoint being hit here.
+  const handlePhoto = () => {
+    setIsPhotoDeleted(false);
+    navigation.navigate('UploadPhoto', {setPhotoData});
+  };
+
+  const deletePhotoFile = () => {
+    RNFS.unlink(photoData?.uri);
+    setPhotoData(null);
+    setIsPhotoDeleted(true);
+    showToast('Photo removed');
+  };
+
   const submitReview = async () => {
-    console.log('EditReview: Submitting Review...');
+    // Reset error state values
+    setValidReview(true);
+    setIsProfanity(false);
     Keyboard.dismiss();
-    const token = await getToken();
-    try {
-      const response = await axios({
-        method: 'patch',
-        url: `http://10.0.2.2:3333/api/1.0.0/location/${location_id}/review/${review_id}`,
-        responseType: 'json',
-        headers: {'X-Authorization': token},
-        data: {
-          overall_rating: overall,
-          price_rating: price,
-          quality_rating: quality,
-          clenliness_rating: clean,
-          review_body: review,
-        },
-      });
-      if (response?.status === 200) {
-        showToast('Review edited!');
-        console.log('Review edited!');
-        navigation.goBack();
-      } else {
-        showToast('Error editing review...');
+
+    // Check that there is enough written in review body before submitting
+    if (review.length < 4) {
+      setValidReview(false);
+      return;
+    }
+
+    // Perform Profanity Filter check
+    const checkIfProfanity = profanityFilter(review);
+    if (checkIfProfanity) {
+      setIsProfanity(true);
+      return;
+    }
+
+    const data = {};
+
+    if (overall !== overall_rating) {
+      data.overall_rating = overall;
+    }
+    if (price !== price_rating) {
+      data.price_rating = price;
+    }
+    if (quality !== quality_rating) {
+      data.quality_rating = quality;
+    }
+    if (clean !== clenliness_rating) {
+      data.clenliness_rating = clean;
+    }
+    if (review !== review_body) {
+      data.review_body = review;
+    }
+
+    console.log('EditReview: Data being sent in PATCH: ');
+    console.log(data);
+
+    const response = await updateReview(location_id, review_id, data);
+
+    if (response?.status === 200) {
+      showToast('Review edited!');
+      console.log('Review edited!');
+      // Only runs if a photo has been taken.
+      if (photoData) {
+        const uploadPhoto = await photoReview(
+          location_id,
+          review_id,
+          photoData,
+        );
+        if (uploadPhoto.status === 200) {
+          showToast('Photo successfully added to review');
+          console.log('EditReview: Photo successfully added to review');
+        } else {
+          showToast(
+            "Sorry, we couldn't upload your photo to the review. Please try again!",
+          );
+          return;
+        }
+        console.log(
+          'EditReview: Review added with photo: navigating back now...',
+        );
       }
-    } catch (error) {
-      console.log(error);
+
+      navigation.goBack();
+    } else {
+      showToast('Error editing review, please try again.');
     }
   };
   return (
@@ -119,8 +186,41 @@ export default function EditReview({route, navigation}) {
         multiline
         dense
         value={review}
+        error={!validReview}
         onChangeText={(review) => setReview(review)}
       />
+      {!validReview ? (
+        <HelperText type="error">
+          We need a little more info! Please ensure the review has at least four
+          letters.
+        </HelperText>
+      ) : null}
+      {isProfanity ? (
+        <HelperText type="error" visible={isProfanity}>
+          Sorry, it looks like you just mentioned tea, cakes and pastries in
+          your review. Please remove these from your review. (We prefer comments
+          on our amazing coffee!)
+        </HelperText>
+      ) : null}
+
+      {photoData && !isPhotoDeleted ? (
+        <View>
+          <Image
+            source={{
+              uri: photoData?.uri,
+            }}
+            style={styles.image}
+          />
+          <DeleteButton handler={() => deletePhotoFile()} size={20} />
+        </View>
+      ) : null}
+      <Button
+        text={
+          photoData && !isPhotoDeleted ? 'Retake Photo' : 'Add Photo To Review'
+        }
+        handler={handlePhoto}
+      />
+
       <Button text="Submit Review" handler={submitReview} />
     </View>
   );

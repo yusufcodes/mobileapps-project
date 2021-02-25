@@ -10,7 +10,7 @@ export default function UploadPhoto({navigation, route}) {
     setPhotoData(photoData);
     showToast('Photo added to review!');
     console.log('Taking you back to Add a Review...');
-    navigation.navigate('AddReview');
+    navigation.goBack();
   };
 
   return <Camera storePhoto={storePhoto} />;

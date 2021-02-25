@@ -125,6 +125,7 @@ export default function Review({
       price_rating,
       quality_rating,
       clenliness_rating,
+      serverPhoto,
     });
   };
 
@@ -146,7 +147,6 @@ export default function Review({
     console.log(serverPhoto);
     hideDialogPhoto();
     console.log('deleting photo...');
-    console.log('AddReview: Adding photo taken to the review...');
     const deletePhoto = true;
     const response = await photoReview(location_id, review_id, deletePhoto);
     if (response?.status === 200) {
@@ -230,7 +230,7 @@ export default function Review({
       </View>
       <View>
         {serverPhoto ? (
-          <Image source={{uri: serverPhoto.uri}} style={styles.image} />
+          <Image source={{uri: serverPhoto?.uri}} style={styles.image} />
         ) : null}
         {editable && serverPhoto ? (
           <View>

@@ -8,7 +8,6 @@ import {
   Button,
 } from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
-// import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import updateUser from '../../functions/network/updateUser';
 import checkValidEmail from '../../functions/checkValidEmail';
@@ -23,7 +22,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// TODO: Disable button if details are not valid
 export default function Update({route}) {
   const globalNavigation = useNavigation();
   const {

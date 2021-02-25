@@ -10,6 +10,7 @@ import getToken from '../../functions/getToken';
 import getUser from '../../functions/network/getUser';
 import photoReview from '../../functions/network/photoReview';
 import addReview from '../../functions/network/addReview';
+import profanityFilter from '../../functions/profanityFilter';
 import DeleteButton from '../Global/DeleteButton';
 
 const styles = StyleSheet.create({
@@ -61,26 +62,6 @@ export default function AddReview({route}) {
     setPhotoData(null);
     setIsPhotoDeleted(true);
     showToast('Photo removed');
-  };
-
-  console.log(`photoData: ${photoData}`);
-
-  const profanityFilter = (review) => {
-    const checkTea = review.search('tea');
-    const checkCake = review.search('cake');
-    const checkPastry = review.search('pastry');
-    const checkPastries = review.search('pastries');
-
-    if (
-      checkTea > -1 ||
-      checkCake > -1 ||
-      checkPastry > -1 ||
-      checkPastries > -1
-    ) {
-      return true;
-    }
-
-    return false;
   };
 
   const submitReview = async () => {
