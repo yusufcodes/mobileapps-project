@@ -1,9 +1,8 @@
-/* eslint-disable react/jsx-no-bind */
 import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Button} from 'react-native-paper';
 import {RNCamera} from 'react-native-camera';
-import DeleteButton from './DeleteButton';
+import showToast from '../../functions/showToast';
 
 const styles = StyleSheet.create({
   container: {flex: 1, flexDirection: 'column'},
@@ -19,12 +18,12 @@ const styles = StyleSheet.create({
 });
 class Camera extends Component {
   takePicture = async () => {
+    showToast('Capturing photo...');
     const {storePhoto} = this.props;
     if (this.camera) {
       const options = {quality: 0.5, base64: true};
       const data = await this.camera.takePictureAsync(options);
       storePhoto(data);
-      // console.log(data.uri);
     }
   };
 
