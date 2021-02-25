@@ -75,39 +75,44 @@ export default function Review({
     return review.likes;
   };
 
+  const performLike = async (location_id, review_id, unlike = false) => {
+    const response = await likeReview(location_id, review_id, unlike);
+    if (!response || response.status !== 200) {
+      showToast('Review could not be liked/unliked. Please try again.');
+      return;
+    }
+    showToast(`Review has been ${unlike ? 'unliked' : 'liked'}`);
+  };
+
   const handleLike = async () => {
     console.log('Running handleLike...');
 
-    // Get user info (get request)
     const userDetails = await getUser();
+    if (!userDetails) {
+      showToast('Review could not be liked/unliked. Please try again.');
+      return;
+    }
 
-    // Retrieve list of liked reviews
     const {liked_reviews} = userDetails.data;
 
     // Empty liked reviews: no need to check if review exists
     if (liked_reviews.length === 0) {
-      await likeReview(location_id, review_id);
-      showToast('Success: review has been liked');
+      await performLike(location_id, review_id);
     } else {
       // Check if review to be liked has already been liked, determine like or unlike action
       const review = liked_reviews.find(
         (currentReview) => currentReview.review.review_id === review_id,
       );
 
-      // Unlike the review (removed from liked_reviews)
       if (review) {
         const unlike = true;
-        await likeReview(location_id, review_id, unlike);
-        showToast('Success: review has been unliked');
+        await performLike(location_id, review_id, unlike);
       } else {
-        // Like the review (add to liked_reviews)
-        await likeReview(location_id, review_id);
-        showToast('Success: review has been liked');
+        await performLike(location_id, review_id);
       }
     }
 
     const newLikes = await getLikes(review_id);
-    console.log(newLikes);
     setReviewLikes(newLikes);
   };
 
