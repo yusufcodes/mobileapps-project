@@ -40,6 +40,7 @@ export default function AddReview({route}) {
   const [review, setReview] = useState('');
   const [validReview, setValidReview] = useState(true);
   const [isPhotoDeleted, setIsPhotoDeleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // State to check if values from profanity filter are mentioned
   const [isProfanity, setIsProfanity] = useState(false);
@@ -65,6 +66,7 @@ export default function AddReview({route}) {
   };
 
   const submitReview = async () => {
+    setIsLoading(true);
     // Reset error state values
     setValidReview(true);
     setIsProfanity(false);
@@ -130,11 +132,13 @@ export default function AddReview({route}) {
           'AddReview: Review added with photo: navigating back now...',
         );
       }
-
+      setIsLoading(false);
       navigation.goBack();
     } else {
       showToast("Sorry, we couldn't submit your review. Please try again.");
+      setIsLoading(false);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -209,6 +213,7 @@ export default function AddReview({route}) {
         {photoData && !isPhotoDeleted ? (
           <View>
             <Image
+              accessibilityLabel="Image to be added to this review"
               source={{
                 uri: photoData?.uri,
               }}
@@ -218,6 +223,9 @@ export default function AddReview({route}) {
           </View>
         ) : null}
         <Button
+          accessibilityLabel="Open Camera"
+          accessibilityHint="Displays screen to allow for you to take a photo for your review"
+          accessibilityRole="button"
           text={
             photoData && !isPhotoDeleted
               ? 'Retake Photo'
@@ -225,7 +233,14 @@ export default function AddReview({route}) {
           }
           handler={handlePhoto}
         />
-        <Button text="Submit Review" handler={submitReview} />
+        <Button
+          accessibilityLabel="Submit Review"
+          accessibilityHint="Confirm action to submit your review"
+          accessibilityRole="button"
+          text="Submit Review"
+          loading={isLoading}
+          handler={submitReview}
+        />
       </View>
     </>
   );

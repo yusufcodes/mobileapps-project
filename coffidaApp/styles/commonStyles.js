@@ -4,6 +4,9 @@ const commonStyles = StyleSheet.create({
   root: {
     padding: 50,
   },
+  primaryColor: {
+    color: '#9B4949',
+  },
   headlineLogo: {
     fontSize: 28,
     fontWeight: 'bold',

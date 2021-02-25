@@ -1,15 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
-import {List, ActivityIndicator, Colors, Paragraph} from 'react-native-paper';
-import getToken from '../../functions/getToken';
+import React, {useState} from 'react';
+import {View, StyleSheet} from 'react-native';
+import {useFocusEffect} from '@react-navigation/native';
+import {List, Paragraph} from 'react-native-paper';
 import getShops from '../../functions/network/getShops';
 import showToast from '../../functions/showToast';
 import Search from './Search';
 import Pagination from '../Global/Pagination';
+import Loader from '../Global/Loader';
+import Star from '../Global/Star';
 
-const axios = require('axios');
-
-// TODO: useFocusEffect like in User to reload the data.
 export default function AllShops({navigation}) {
   const [shops, setShops] = useState([]);
 
@@ -22,7 +21,7 @@ export default function AllShops({navigation}) {
   const [cleanliness, setCleanliness] = useState('');
   const [list, setList] = useState('');
   const [loading, setLoading] = useState(true);
-  const [limit, setLimit] = useState(2);
+  const [limit] = useState(2);
   const [offset, setOffset] = useState(0);
   const [numberOfShops, setNumberOfShops] = useState(0);
 
@@ -69,23 +68,60 @@ export default function AllShops({navigation}) {
     setShops(arrayOfShops);
   };
 
-  useEffect(() => {
-    performSearch();
-  }, [offset, searchQuery]);
+  useFocusEffect(
+    React.useCallback(() => {
+      performSearch();
+    }, [offset, searchQuery]),
+  );
+
+  const styles = StyleSheet.create({
+    main: {
+      flexDirection: 'column',
+      justifyContent: 'space-evenly',
+    },
+    rootListItem: {
+      paddingHorizontal: 30,
+    },
+    listTitle: {
+      fontSize: 18,
+    },
+    listDescription: {
+      paddingVertical: 5,
+    },
+    details: {
+      color: '#6b6b6b',
+    },
+    starDetails: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+  });
 
   const outputShops = () => {
     if (loading) {
-      return <ActivityIndicator animating size="large" color={Colors.red800} />;
+      return <Loader size="large" />;
     }
     if (shops.length > 0) {
       return shops?.map((item, index) => (
         <List.Item
           key={index}
           title={`${item.name}`}
-          description={`Town: ${item.town} \nRating: ${item.rating}`}
-          descriptionNumberOfLines={2}
+          description={() => (
+            <View style={styles.starDetails}>
+              <Paragraph style={styles.details}>{item.town}</Paragraph>
+              <Star
+                rating={Math.floor(item.rating)}
+                starSize={15}
+                starMargin={2}
+                disabled
+              />
+            </View>
+          )}
           left={(props) => <List.Icon {...props} icon="coffee" />}
           onPress={() => navigation.navigate('Shop', {id: item.id})}
+          style={styles.rootListItem}
+          titleStyle={styles.listTitle}
+          descriptionStyle={styles.listDescription}
         />
       ));
     }
@@ -111,6 +147,7 @@ export default function AllShops({navigation}) {
         setList={setList}
         performSearch={performSearch}
       />
+
       {outputShops()}
       <Pagination
         limit={limit}

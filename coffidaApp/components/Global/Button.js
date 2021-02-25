@@ -1,9 +1,13 @@
 import React from 'react';
 import {Button as PaperButton} from 'react-native-paper';
 
-export default function Button({text, icon, handler}) {
+export default function Button({text, icon, handler, ...rest}) {
   return (
-    <PaperButton icon={icon} mode="contained" onPress={() => handler()}>
+    <PaperButton
+      {...rest}
+      icon={icon}
+      mode="contained"
+      onPress={() => handler()}>
       {text}
     </PaperButton>
   );

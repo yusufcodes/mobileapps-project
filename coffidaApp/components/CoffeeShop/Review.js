@@ -222,8 +222,20 @@ export default function Review({
                         </Paragraph>
                       </Dialog.Content>
                       <Dialog.Actions>
-                        <Button onPress={hideDialog}>Cancel</Button>
-                        <Button onPress={handleDelete}>OK</Button>
+                        <Button
+                          accessibilityLabel="Cancel action"
+                          accessibilityHint="Stops action of deleting this review"
+                          accessibilityRole="button"
+                          onPress={hideDialog}>
+                          Cancel
+                        </Button>
+                        <Button
+                          accessibilityLabel="OK to delete review"
+                          accessibilityHint="Confirm action to delete this review"
+                          accessibilityRole="button"
+                          onPress={handleDelete}>
+                          OK
+                        </Button>
                       </Dialog.Actions>
                     </Dialog>
                   </Portal>
@@ -235,7 +247,11 @@ export default function Review({
       </View>
       <View>
         {serverPhoto ? (
-          <Image source={{uri: serverPhoto?.uri}} style={styles.image} />
+          <Image
+            accessibilityLabel="Image that is associated with this review"
+            source={{uri: serverPhoto?.uri}}
+            style={styles.image}
+          />
         ) : null}
         {editable && serverPhoto ? (
           <View>
@@ -249,8 +265,20 @@ export default function Review({
                   </Paragraph>
                 </Dialog.Content>
                 <Dialog.Actions>
-                  <Button onPress={hideDialogPhoto}>Cancel</Button>
-                  <Button onPress={handleDeletePhoto}>OK</Button>
+                  <Button
+                    accessibilityLabel="Cancel action"
+                    accessibilityHint="Stops action of deleting this photo"
+                    accessibilityRole="button"
+                    onPress={hideDialogPhoto}>
+                    Cancel
+                  </Button>
+                  <Button
+                    accessibilityLabel="OK to delete photo"
+                    accessibilityHint="Confirm action to delete this photo"
+                    accessibilityRole="button"
+                    onPress={handleDeletePhoto}>
+                    OK
+                  </Button>
                 </Dialog.Actions>
               </Dialog>
             </Portal>

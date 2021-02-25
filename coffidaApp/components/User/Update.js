@@ -110,7 +110,9 @@ export default function Update({route}) {
       {/* TODO: Disable button if details are not valid */}
       <Button
         uppercase
-        accessibilityLabel="Confirming and submitting all entered details"
+        accessibilityLabel="Confirm details"
+        accessibilityHint="Confirming and submitting any updated user information"
+        accessibilityRole="button"
         mode="contained"
         disabled={!validEmail}
         onPress={() => updateHandler()}>

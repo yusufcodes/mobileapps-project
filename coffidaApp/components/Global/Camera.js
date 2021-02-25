@@ -41,6 +41,9 @@ class Camera extends Component {
           <Button
             icon="camera"
             mode="contained"
+            accessibilityLabel="Capture Photo"
+            accessibilityHint="Take the photo in the frame to use in your review"
+            accessibilityRole="button"
             onPress={this.takePicture.bind(this)}>
             Capture
           </Button>

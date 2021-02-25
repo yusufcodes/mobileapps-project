@@ -1,18 +1,19 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TextInput} from 'react-native';
+import React from 'react';
+import {View, StyleSheet} from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-
 import {
   Searchbar,
   IconButton,
-  Colors,
   Dialog,
   Portal,
   Paragraph,
   Button,
   Subheading,
   Divider,
+  Title,
+  Headline,
 } from 'react-native-paper';
+import commonStyles from '../../styles/commonStyles';
 
 export default function Search({
   searchQuery,
@@ -36,12 +37,18 @@ export default function Search({
   const styles = StyleSheet.create({
     root: {
       flexDirection: 'row',
+      alignItems: 'center',
     },
     search: {
-      flex: 11,
+      flex: 10,
+      borderRadius: 50,
+      marginTop: 10,
+      marginBottom: 10,
+      marginLeft: 10,
     },
     icon: {
-      flex: 1,
+      flex: 2,
+      margin: 0,
     },
     rating: {
       flexDirection: 'row',
@@ -54,6 +61,9 @@ export default function Search({
     },
     ratingText: {
       flex: 1,
+    },
+    title: {
+      fontSize: 16,
     },
   });
 
@@ -79,15 +89,16 @@ export default function Search({
     <View style={styles.root}>
       <Searchbar
         placeholder="Search"
+        searchAccessibilityLabel="Search for coffee shops"
         onChangeText={(searchQuery) => onChangeSearch(searchQuery)}
         value={searchQuery}
         style={styles.search}
       />
       <IconButton
-        icon="filter-variant"
-        color={Colors.black}
+        icon="format-list-checkbox"
+        accessibilityLabel="Display search filters"
         size={30}
-        style={styles.icon}
+        style={[styles.icon, commonStyles.primaryColor]}
         onPress={() => setVisible(true)}
       />
       <Portal>
@@ -100,7 +111,7 @@ export default function Search({
           <Dialog.ScrollArea>
             <Dialog.Title>Search Filter</Dialog.Title>
             <Dialog.Content>
-              <Subheading>Rating</Subheading>
+              <Title style={styles.title}>Rating</Title>
               <PickerCustom
                 title="Overall: "
                 selectedValue={overall}
@@ -124,7 +135,9 @@ export default function Search({
             </Dialog.Content>
             <Divider />
             <Dialog.Content>
-              <Subheading>Favourited / Reviewed Locations</Subheading>
+              <Title style={styles.title}>
+                Favourited / Reviewed Locations
+              </Title>
               <Picker
                 selectedValue={list}
                 style={styles.picker}
@@ -137,6 +150,9 @@ export default function Search({
             </Dialog.Content>
             <Dialog.Actions>
               <Button
+                accessibilityLabel="Apply search filters"
+                accessibilityHint="Uses selected filters to query search results for coffee shops"
+                accessibilityRole="button"
                 onPress={() => {
                   hideDialog();
                   performSearch();

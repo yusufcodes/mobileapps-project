@@ -73,7 +73,9 @@ export default function SignUp({navigation}) {
         <Button
           style={commonStyles.buttonSpacing}
           uppercase
-          accessibilityLabel="Creating an account for Coffida app"
+          accessibilityLabel="Create a new account"
+          accessibilityHint="Uses your details to create a new account for Coffida"
+          accessibilityRole="button"
           mode="contained"
           disabled={
             !validEmail ||
@@ -93,7 +95,9 @@ export default function SignUp({navigation}) {
         <Button
           style={commonStyles.buttonSpacing}
           uppercase
-          accessibilityLabel="Changing screen to enable logging into existing account"
+          accessibilityLabel="Navigate to log in"
+          accessibilityHint="Changing screen to enable logging into existing account"
+          accessibilityRole="button"
           mode="contained"
           onPress={() => {
             navigation.navigate('Log In');
@@ -113,7 +117,9 @@ export default function SignUp({navigation}) {
           </Subheading>
           <Button
             uppercase
-            accessibilityLabel="Changing screen to enable logging into existing account"
+            accessibilityLabel="Navigate to log in"
+            accessibilityHint="Changing screen to enable logging into existing account"
+            accessibilityRole="button"
             mode="contained"
             onPress={() => {
               navigation.navigate('Log In');

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Colors, IconButton, Paragraph} from 'react-native-paper';
+import commonStyles from '../../styles/commonStyles';
 
 export default function Pagination({limit, offset, setOffset, numberOfShops}) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -11,14 +12,23 @@ export default function Pagination({limit, offset, setOffset, numberOfShops}) {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    button: {
+      borderWidth: 2,
+      borderColor: 'black',
+      width: 40,
+      height: 40,
+    },
+    text: {
+      marginHorizontal: 25,
+    },
   });
   const totalPages = Math.ceil(numberOfShops / limit);
 
   return (
     <View style={styles.root}>
       <IconButton
+        style={[commonStyles.primaryColor, styles.button]}
         icon="chevron-left"
-        color={Colors.black}
         size={35}
         onPress={() => {
           if (currentPage > 1) {
@@ -29,12 +39,12 @@ export default function Pagination({limit, offset, setOffset, numberOfShops}) {
         }}
         disabled={currentPage === 1}
       />
-      <Paragraph>
+      <Paragraph style={styles.text}>
         Page {currentPage} of {totalPages === 0 ? 1 : totalPages}
       </Paragraph>
       <IconButton
+        style={[commonStyles.primaryColor, styles.button]}
         icon="chevron-right"
-        color={Colors.black}
         size={35}
         onPress={() => {
           if (currentPage < totalPages) {

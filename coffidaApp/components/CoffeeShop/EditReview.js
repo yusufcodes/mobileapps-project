@@ -48,6 +48,7 @@ export default function EditReview({route, navigation}) {
   const [validReview, setValidReview] = useState(true);
 
   const [isPhotoDeleted, setIsPhotoDeleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // State to check if values from profanity filter are mentioned
   const [isProfanity, setIsProfanity] = useState(false);
@@ -73,6 +74,7 @@ export default function EditReview({route, navigation}) {
   };
 
   const submitReview = async () => {
+    setIsLoading(true);
     // Reset error state values
     setValidReview(true);
     setIsProfanity(false);
@@ -81,6 +83,7 @@ export default function EditReview({route, navigation}) {
     // Check that there is enough written in review body before submitting
     if (review.length < 4) {
       setValidReview(false);
+      setIsLoading(false);
       return;
     }
 
@@ -88,6 +91,8 @@ export default function EditReview({route, navigation}) {
     const checkIfProfanity = profanityFilter(review);
     if (checkIfProfanity) {
       setIsProfanity(true);
+      setIsLoading(false);
+
       return;
     }
 
@@ -137,10 +142,11 @@ export default function EditReview({route, navigation}) {
           'EditReview: Review added with photo: navigating back now...',
         );
       }
-
+      setIsLoading(false);
       navigation.goBack();
     } else {
       showToast('Error editing review, please try again.');
+      setIsLoading(false);
     }
   };
   return (
@@ -206,6 +212,7 @@ export default function EditReview({route, navigation}) {
       {photoData && !isPhotoDeleted ? (
         <View>
           <Image
+            accessibilityLabel="Image that is currently associated with this review"
             source={{
               uri: photoData?.uri,
             }}
@@ -215,13 +222,23 @@ export default function EditReview({route, navigation}) {
         </View>
       ) : null}
       <Button
+        accessibilityLabel="Open Camera"
+        accessibilityHint="Displays screen to allow for you to take a photo for your review"
+        accessibilityRole="button"
         text={
           photoData && !isPhotoDeleted ? 'Retake Photo' : 'Add Photo To Review'
         }
         handler={handlePhoto}
       />
 
-      <Button text="Submit Review" handler={submitReview} />
+      <Button
+        text="Submit Review"
+        accessibilityLabel="Submit Review"
+        accessibilityHint="Confirm action to submit your review"
+        accessibilityRole="button"
+        loading={isLoading}
+        handler={submitReview}
+      />
     </View>
   );
 }

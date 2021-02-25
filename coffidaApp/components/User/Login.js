@@ -94,7 +94,9 @@ export default function Login({navigation}) {
         <Button
           style={commonStyles.buttonSpacing}
           uppercase
-          accessibilityLabel="Performing log in using the details entered"
+          accessibilityLabel="Log in"
+          accessibilityHint="Use the login details entered to try and sign into your account"
+          accessibilityRole="button"
           mode="contained"
           disabled={!validEmail || !validPassword}
           onPress={() => performLogin()}>

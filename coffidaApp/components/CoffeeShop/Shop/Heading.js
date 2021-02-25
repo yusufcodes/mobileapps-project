@@ -106,7 +106,13 @@ export default function Heading({details, navigation, id}) {
           <Paragraph>Cleanliness: {cleanlinessRating}</Paragraph>
         </View>
       </View>
-      <Button text="Add A Review" handler={navigateReview} />
+      <Button
+        accessibilityLabel="OK to delete review"
+        accessibilityHint="Confirm action to delete this review"
+        accessibilityRole="button"
+        text="Add A Review"
+        handler={navigateReview}
+      />
     </View>
   );
 }

@@ -158,8 +158,20 @@ export default function User({navigation}) {
           <Loader size="small" />
         )}
       </View>
-      <Button text="Update Details" handler={displayUpdate} />
-      <Button text="Logout" handler={showLogoutDialog} />
+      <Button
+        accessibilityLabel="Update user details"
+        accessibilityHint="Navigate to the screen where you can enter any details you want to update"
+        accessibilityRole="button"
+        text="Update Details"
+        handler={displayUpdate}
+      />
+      <Button
+        accessibilityLabel="Logout"
+        accessibilityHint="Display a dialog which will prompt whether you would like to log out of your account"
+        accessibilityRole="button"
+        text="Logout"
+        handler={showLogoutDialog}
+      />
       <Title>My Liked Locations</Title>
       {locations && !loadingDetails ? (
         locations.map((item, index) => (
