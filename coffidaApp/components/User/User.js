@@ -55,7 +55,10 @@ export default function User({navigation}) {
         console.log('User not logged in');
         globalNavigation.navigate('Sign Up');
       } else {
-        showToast("Sorry, we couldn't fetch your information.");
+        showToast(
+          "Sorry, we couldn't fetch your information. Please try refreshing this tab.",
+        );
+        return null;
       }
       return;
     }
@@ -78,6 +81,10 @@ export default function User({navigation}) {
       (async function () {
         setLoadingDetails(true);
         const response = await performGetUser();
+
+        if (!response) {
+          return;
+        }
 
         const {
           email,
