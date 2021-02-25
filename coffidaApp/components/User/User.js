@@ -43,13 +43,12 @@ export default function User({navigation}) {
   const [loggedOut, setLoggedOut] = useState(false);
   const [errorLogOut, setErrorLogOut] = useState(false);
 
+  // State values for log out dialog
   const [visible, setVisible] = React.useState(false);
   const hideLogoutDialog = () => setVisible(false);
   const showLogoutDialog = () => setVisible(true);
 
-  const displayUpdate = () => navigation.navigate('Update', {details});
   const performGetUser = async () => {
-    setLoadingDetails(true);
     const response = await getUser();
     if (response?.status !== 200) {
       if (response?.status === 401) {
@@ -61,12 +60,6 @@ export default function User({navigation}) {
       return;
     }
     return response;
-  };
-
-  const refreshReviews = async () => {
-    const response = await performGetUser();
-    const {reviews} = response?.data;
-    setReviews(reviews);
   };
 
   useEffect(() => {
@@ -107,6 +100,14 @@ export default function User({navigation}) {
     }, []),
   );
 
+  const displayUpdate = () => navigation.navigate('Update', {details});
+
+  const refreshReviews = async () => {
+    const response = await performGetUser();
+    const {reviews} = response?.data;
+    setReviews(reviews);
+  };
+
   return (
     <ScrollView style={styles.root}>
       <Portal>
@@ -146,13 +147,13 @@ export default function User({navigation}) {
             </View>
           </>
         ) : (
-          <Loader size="large" />
+          <Loader size="small" />
         )}
       </View>
       <Button text="Update Details" handler={displayUpdate} />
       <Button text="Logout" handler={showLogoutDialog} />
       <Title>My Liked Locations</Title>
-      {locations ? (
+      {locations && !loadingDetails ? (
         locations.map((item, index) => (
           <List.Item
             key={index}
@@ -164,11 +165,11 @@ export default function User({navigation}) {
           />
         ))
       ) : (
-        <Loader size="large" />
+        <Loader size="small" />
       )}
 
       <Title>My Reviews</Title>
-      {reviews ? (
+      {reviews && !loadingDetails ? (
         reviews.map(
           (
             {
@@ -205,11 +206,11 @@ export default function User({navigation}) {
           ),
         )
       ) : (
-        <Loader size="large" />
+        <Loader size="small" />
       )}
 
       <Title>My Liked Reviews</Title>
-      {likedReviews ? (
+      {likedReviews && !loadingDetails ? (
         likedReviews.map(
           (
             {
@@ -239,7 +240,7 @@ export default function User({navigation}) {
           ),
         )
       ) : (
-        <Loader size="large" />
+        <Loader size="small" />
       )}
     </ScrollView>
   );
