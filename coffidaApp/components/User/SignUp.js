@@ -4,13 +4,16 @@ import {
   TextInput,
   Headline,
   Subheading,
+  Caption,
   Button,
+  Paragraph,
   HelperText,
 } from 'react-native-paper';
 import showToast from '../../functions/showToast';
 import createUser from '../../functions/network/createUser';
 import checkValidEmail from '../../functions/checkValidEmail';
 import checkValidPassword from '../../functions/checkValidPassword';
+import commonStyles from '../../styles/commonStyles';
 
 export default function SignUp({navigation}) {
   const [firstName, setFirstName] = React.useState('');
@@ -58,6 +61,9 @@ export default function SignUp({navigation}) {
     container: {
       padding: 50,
     },
+    title: {
+      textAlign: 'center',
+    },
   });
 
   // Conditionally rendering button output depending on if the user created an account
@@ -65,8 +71,9 @@ export default function SignUp({navigation}) {
     let components = (
       <>
         <Button
+          style={commonStyles.buttonSpacing}
           uppercase
-          accessibilityLabel="Sign up for an account"
+          accessibilityLabel="Creating an account for Coffida app"
           mode="contained"
           disabled={
             !validEmail ||
@@ -84,8 +91,9 @@ export default function SignUp({navigation}) {
           Already have an account?
         </Subheading>
         <Button
+          style={commonStyles.buttonSpacing}
           uppercase
-          accessibilityLabel="Login to existing account"
+          accessibilityLabel="Changing screen to enable logging into existing account"
           mode="contained"
           onPress={() => {
             navigation.navigate('Log In');
@@ -105,7 +113,7 @@ export default function SignUp({navigation}) {
           </Subheading>
           <Button
             uppercase
-            accessibilityLabel="Login to existing account"
+            accessibilityLabel="Changing screen to enable logging into existing account"
             mode="contained"
             onPress={() => {
               navigation.navigate('Log In');
@@ -120,35 +128,45 @@ export default function SignUp({navigation}) {
 
   return (
     <View style={styles.container}>
+      <Headline style={[commonStyles.headlineLogo, styles.title]}>
+        Coffida App
+      </Headline>
       <Headline>Sign Up</Headline>
-      <Subheading>
+      <Paragraph>
         Sign up for an account to begin using the Coffida app 👋
-      </Subheading>
+      </Paragraph>
       <TextInput
+        style={commonStyles.inputSpacing}
         label="First Name"
         value={firstName}
         mode="outlined"
         onChangeText={(firstName) => setFirstName(firstName)}
       />
       <TextInput
+        style={commonStyles.inputSpacing}
         label="Last Name"
         value={lastName}
         mode="outlined"
         onChangeText={(lastName) => setLastName(lastName)}
       />
+
       <TextInput
+        style={commonStyles.inputSpacing}
         label="Email"
         value={email}
         mode="outlined"
-        error={!validEmail && email.length > 0}
         onChangeText={(email) => {
           setEmail(email);
         }}
       />
-      <HelperText type="error" visible={!validEmail && email.length > 0}>
-        Please enter a valid email address
-      </HelperText>
+      {!validEmail && email.length > 0 ? (
+        <HelperText type="error" visible={!validEmail && email.length > 0}>
+          Please enter a valid email address
+        </HelperText>
+      ) : null}
+
       <TextInput
+        style={commonStyles.inputSpacing}
         secureTextEntry
         label="Password"
         value={password}
@@ -156,9 +174,14 @@ export default function SignUp({navigation}) {
         error={!validPassword && password.length > 0}
         onChangeText={(password) => setPassword(password)}
       />
-      <HelperText type="error" visible={!validPassword && password.length > 0}>
-        Please enter a password with more than five characters
-      </HelperText>
+      {!validPassword && password.length > 0 ? (
+        <HelperText
+          type="error"
+          visible={!validPassword && password.length > 0}>
+          Please enter a password with more than five characters
+        </HelperText>
+      ) : null}
+
       {renderButtons()}
     </View>
   );

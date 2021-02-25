@@ -11,6 +11,7 @@ import showToast from '../../functions/showToast';
 import checkValidEmail from '../../functions/checkValidEmail';
 import checkValidPassword from '../../functions/checkValidPassword';
 import login from '../../functions/network/login';
+import commonStyles from '../../styles/commonStyles';
 
 export default function Login({navigation}) {
   const [email, setEmail] = React.useState('');
@@ -43,20 +44,7 @@ export default function Login({navigation}) {
     }
   }, [loggedIn, loginError, invalidLogin]);
 
-  // TODO: Styles
-  const styles = StyleSheet.create({
-    container: {
-      padding: 50,
-    },
-    preview: {
-      flex: 1,
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      backgroundColor: 'lightgreen',
-
-      width: '100%',
-    },
-  });
+  const styles = StyleSheet.create({});
 
   const performLogin = async () => {
     Keyboard.dismiss();
@@ -67,12 +55,13 @@ export default function Login({navigation}) {
 
   return (
     <>
-      <View style={styles.container}>
+      <View style={commonStyles.root}>
         <Headline>Log In</Headline>
         <Subheading>
           Use your log in details to start using the Coffida app
         </Subheading>
         <TextInput
+          style={commonStyles.inputSpacing}
           label="Email"
           value={email}
           mode="outlined"
@@ -81,10 +70,13 @@ export default function Login({navigation}) {
             setEmail(email);
           }}
         />
-        <HelperText type="error" visible={!validEmail && email.length > 0}>
-          Please enter a valid email address
-        </HelperText>
+        {!validEmail && email.length > 0 ? (
+          <HelperText type="error" visible={!validEmail && email.length > 0}>
+            Please enter a valid email address
+          </HelperText>
+        ) : null}
         <TextInput
+          style={commonStyles.inputSpacing}
           secureTextEntry
           label="Password"
           value={password}
@@ -92,14 +84,17 @@ export default function Login({navigation}) {
           error={!validPassword && password.length > 0}
           onChangeText={(password) => setPassword(password)}
         />
-        <HelperText
-          type="error"
-          visible={!validPassword && password.length > 0}>
-          Please enter a password with more than five characters
-        </HelperText>
+        {!validPassword && password.length > 0 ? (
+          <HelperText
+            type="error"
+            visible={!validPassword && password.length > 0}>
+            Please enter a password with more than five characters
+          </HelperText>
+        ) : null}
         <Button
+          style={commonStyles.buttonSpacing}
           uppercase
-          accessibilityLabel="Log in to an existing accoueent"
+          accessibilityLabel="Performing log in using the details entered"
           mode="contained"
           disabled={!validEmail || !validPassword}
           onPress={() => performLogin()}>

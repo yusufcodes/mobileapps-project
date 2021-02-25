@@ -1,19 +1,55 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import {View} from 'react-native';
+import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {Provider as PaperProvider} from 'react-native-paper';
+import {
+  Provider as PaperProvider,
+  DefaultTheme as PaperTheme,
+} from 'react-native-paper';
 import SignUp from './components/User/SignUp';
 import Login from './components/User/Login';
 import Main from './components/Main';
 
 const Stack = createStackNavigator();
 
+const theme = {
+  ...PaperTheme,
+  roundness: 2,
+  colors: {
+    ...PaperTheme.colors,
+    primary: '#53433A', //tint color
+    accent: '#f1c40f', // secondary
+    // background:
+    // surface:
+    text: '#2a150d',
+    // disabled:
+    // placeholder:
+    // backdrop:
+  },
+};
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#9B4949',
+    background: '#F4F3EF',
+    // card: '#BBA79C',
+    // text: 'blue',
+    // border: 'green',
+  },
+};
+
 const App = () => (
-  <PaperProvider>
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main">
-        <Stack.Screen name="Sign Up" component={SignUp} />
+  <PaperProvider theme={theme}>
+    <NavigationContainer theme={MyTheme}>
+      <Stack.Navigator initialRouteName="Sign Up">
+        <Stack.Screen
+          name="Sign Up"
+          component={SignUp}
+          options={{headerShown: false}}
+        />
         <Stack.Screen name="Log In" component={Login} />
         <Stack.Screen
           name="Main"
