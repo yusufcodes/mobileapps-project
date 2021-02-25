@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, Keyboard, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import RNFS from 'react-native-fs';
 import {Title, TextInput, IconButton, HelperText} from 'react-native-paper';
 import Star from '../Global/Star';
 import Button from '../Global/Button';
@@ -9,6 +10,7 @@ import getToken from '../../functions/getToken';
 import getUser from '../../functions/network/getUser';
 import photoReview from '../../functions/network/photoReview';
 import addReview from '../../functions/network/addReview';
+import DeleteButton from '../Global/DeleteButton';
 
 const styles = StyleSheet.create({
   root: {
@@ -36,19 +38,30 @@ export default function AddReview({route}) {
   const [clean, setClean] = useState(0);
   const [review, setReview] = useState('');
   const [validReview, setValidReview] = useState(true);
+  const [isPhotoDeleted, setIsPhotoDeleted] = useState(false);
 
   // State to check if values from profanity filter are mentioned
   const [isProfanity, setIsProfanity] = useState(false);
 
   // Photo state to determine if the user has attached a photo
-  const [photoData, setPhotoData] = useState(null);
+  const [photoData, setPhotoData] = useState(false);
 
   const handleOverall = (rating) => setOverall(rating);
   const handlePrice = (rating) => setPrice(rating);
   const handleQuality = (rating) => setQuality(rating);
   const handleClean = (rating) => setClean(rating);
 
-  const handlePhoto = () => navigation.navigate('UploadPhoto', {setPhotoData});
+  const handlePhoto = () => {
+    setIsPhotoDeleted(false);
+    navigation.navigate('UploadPhoto', {setPhotoData});
+  };
+
+  const deletePhotoFile = () => {
+    RNFS.unlink(photoData?.uri);
+    setPhotoData(null);
+    setIsPhotoDeleted(true);
+    showToast('Photo removed');
+  };
 
   console.log(`photoData: ${photoData}`);
 
@@ -212,16 +225,23 @@ export default function AddReview({route}) {
           </HelperText>
         ) : null}
 
-        {photoData ? (
-          <Image
-            source={{
-              uri: photoData?.uri,
-            }}
-            style={styles.image}
-          />
+        {photoData && !isPhotoDeleted ? (
+          <View>
+            <Image
+              source={{
+                uri: photoData?.uri,
+              }}
+              style={styles.image}
+            />
+            <DeleteButton handler={() => deletePhotoFile()} size={20} />
+          </View>
         ) : null}
         <Button
-          text={photoData ? 'Retake Photo' : 'Add Photo To Review'}
+          text={
+            photoData && !isPhotoDeleted
+              ? 'Retake Photo'
+              : 'Add Photo To Review'
+          }
           handler={handlePhoto}
         />
         <Button text="Submit Review" handler={submitReview} />

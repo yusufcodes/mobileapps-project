@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Button} from 'react-native-paper';
 import {RNCamera} from 'react-native-camera';
+import DeleteButton from './DeleteButton';
 
 const styles = StyleSheet.create({
   container: {flex: 1, flexDirection: 'column'},
@@ -35,6 +36,7 @@ class Camera extends Component {
             this.camera = ref;
           }}
           style={styles.preview}
+          captureAudio={false}
         />
         <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center'}}>
           <Button
