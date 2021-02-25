@@ -3,6 +3,8 @@ import {View, ScrollView} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {ActivityIndicator, Colors, Title} from 'react-native-paper';
 import Heading from './Shop/Heading';
+import showToast from '../../functions/showToast';
+
 import getLocation from '../../functions/network/getLocation';
 import Review from './Review';
 
@@ -39,6 +41,11 @@ export default function Shop({route, navigation}) {
     React.useCallback(() => {
       async function performRequest() {
         const response = await getLocation(location_id);
+        if (!response || response.status !== 200) {
+          showToast("Oops, we couldn't fetch this location. Please try again.");
+          return;
+        }
+        showToast('Location retrieved');
         handleResponse(response);
       }
       performRequest();

@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import {List, ActivityIndicator, Colors, Paragraph} from 'react-native-paper';
 import getToken from '../../functions/getToken';
+import getShops from '../../functions/network/getShops';
+import showToast from '../../functions/showToast';
 import Search from './Search';
 import Pagination from '../Global/Pagination';
 
@@ -26,47 +28,45 @@ export default function AllShops({navigation}) {
 
   const performSearch = async () => {
     setLoading(true);
-    const token = await getToken();
-    try {
-      const responseTotalShops = await axios({
-        method: 'get',
-        url: `http://10.0.2.2:3333/api/1.0.0/find?q=${searchQuery}&overall_rating=${overall}&price_rating=${price}&quality_rating=${quality}&clenliness_rating=${cleanliness}&search_in=${list}`,
-        responseType: 'json',
-        headers: {'X-Authorization': token},
-      });
-
-      setNumberOfShops(responseTotalShops?.data.length);
-      console.log(`Number of shops AllShops: ${numberOfShops}`);
-
-      console.log(
-        `AllShops: Performing request with values: limit = ${limit}, offset = ${offset}`,
-      );
-      const response = await axios({
-        method: 'get',
-        url: `http://10.0.2.2:3333/api/1.0.0/find?q=${searchQuery}
-&overall_rating=${overall}&price_rating=${price}&quality_rating=${quality}&clenliness_rating=${cleanliness}&search_in=${list}&limit=${limit}&offset=${offset}`,
-        responseType: 'json',
-        headers: {'X-Authorization': token},
-      });
-
-      const arrayOfShops = response?.data.map((item) => ({
-        id: item.location_id,
-        name: item.location_name,
-        town: item.location_town,
-        rating: item.avg_overall_rating,
-        reviews: item.location_reviews,
-      }));
-      console.log('AllShops: Got shops');
+    const responseTotalShops = await getShops(
+      searchQuery,
+      overall,
+      price,
+      quality,
+      cleanliness,
+      list,
+    );
+    if (!responseTotalShops) {
+      showToast('Failed to load shops, please try reloading this tab.');
       setLoading(false);
-      setShops(arrayOfShops);
-    } catch (error) {
-      if (error.response?.status === 401) {
-        console.log('User not signed in - redirecting to Sign Up...');
-        navigation.navigate('Sign Up');
-      }
-
-      console.log(error);
+      return;
     }
+    setNumberOfShops(responseTotalShops?.data.length);
+
+    const response = await getShops(
+      searchQuery,
+      overall,
+      price,
+      quality,
+      cleanliness,
+      list,
+      limit,
+      offset,
+    );
+
+    if (!response || response.status !== 200) {
+      showToast('Failed to load shops, please try reloading this tab.');
+    }
+
+    const arrayOfShops = response?.data.map((item) => ({
+      id: item.location_id,
+      name: item.location_name,
+      town: item.location_town,
+      rating: item.avg_overall_rating,
+      reviews: item.location_reviews,
+    }));
+    setLoading(false);
+    setShops(arrayOfShops);
   };
 
   useEffect(() => {

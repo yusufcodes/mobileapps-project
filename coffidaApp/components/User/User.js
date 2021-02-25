@@ -58,6 +58,7 @@ export default function User({navigation}) {
         showToast(
           "Sorry, we couldn't fetch your information. Please try refreshing this tab.",
         );
+        setLoadingDetails(false);
         return null;
       }
       return;
