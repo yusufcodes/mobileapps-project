@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Title, Subheading, Paragraph} from 'react-native-paper';
 import LikeButton from '../../Global/LikeButton';
@@ -6,6 +6,7 @@ import Button from '../../Global/Button';
 import getUser from '../../../functions/network/getUser';
 import favouriteLocation from '../../../functions/network/favouriteLocation';
 import showToast from '../../../functions/showToast';
+import Star from '../../Global/Star';
 
 export default function Heading({details, navigation, id}) {
   const {
@@ -16,6 +17,9 @@ export default function Heading({details, navigation, id}) {
     qualityRating,
     cleanlinessRating,
   } = details;
+  useEffect(() => {
+    navigation.setOptions({title: name});
+  }, []);
 
   const navigateReview = () => {
     navigation.navigate('AddReview', {id});
@@ -24,15 +28,13 @@ export default function Heading({details, navigation, id}) {
   const styles = StyleSheet.create({
     root: {
       padding: 50,
-      color: 'red',
-      borderColor: 'red',
+      backgroundColor: '#fcd5ce',
     },
     text: {
       alignItems: 'center',
     },
     name: {
       fontSize: 30,
-      borderColor: 'blue',
     },
     ratingsContainer: {
       flexDirection: 'row',
@@ -47,6 +49,10 @@ export default function Heading({details, navigation, id}) {
       justifyContent: 'center',
       borderColor: 'black',
       padding: 10,
+    },
+    singleRating: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
     },
     reviewButton: {
       padding: 5,
@@ -100,10 +106,42 @@ export default function Heading({details, navigation, id}) {
 
         <View style={styles.ratings}>
           <Title>Ratings</Title>
-          <Paragraph>Overall: {overallRating}</Paragraph>
-          <Paragraph>Price: {priceRating}</Paragraph>
-          <Paragraph>Quality: {qualityRating}</Paragraph>
-          <Paragraph>Cleanliness: {cleanlinessRating}</Paragraph>
+          <View style={styles.singleRating}>
+            <Paragraph>Overall: </Paragraph>
+            <Star
+              rating={Math.floor(overallRating)}
+              starSize={15}
+              starMargin={2}
+              disabled
+            />
+          </View>
+          <View style={styles.singleRating}>
+            <Paragraph>Price: </Paragraph>
+            <Star
+              rating={Math.floor(priceRating)}
+              starSize={15}
+              starMargin={2}
+              disabled
+            />
+          </View>
+          <View style={styles.singleRating}>
+            <Paragraph>Quality: </Paragraph>
+            <Star
+              rating={Math.floor(qualityRating)}
+              starSize={15}
+              starMargin={2}
+              disabled
+            />
+          </View>
+          <View style={styles.singleRating}>
+            <Paragraph>Cleanliness: </Paragraph>
+            <Star
+              rating={Math.floor(cleanlinessRating)}
+              starSize={15}
+              starMargin={2}
+              disabled
+            />
+          </View>
         </View>
       </View>
       <Button

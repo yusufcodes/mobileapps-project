@@ -1,8 +1,10 @@
 import React, {useState} from 'react';
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, StyleSheet} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
 import {ActivityIndicator, Colors, Title} from 'react-native-paper';
 import Heading from './Shop/Heading';
+import Loader from '../Global/Loader';
+
 import showToast from '../../functions/showToast';
 
 import getLocation from '../../functions/network/getLocation';
@@ -45,57 +47,59 @@ export default function Shop({route, navigation}) {
           showToast("Oops, we couldn't fetch this location. Please try again.");
           return;
         }
-        showToast('Location retrieved');
         handleResponse(response);
       }
       performRequest();
     }, []),
   );
 
-  let renderShop = (
-    <ActivityIndicator animating size="large" color={Colors.red800} />
-  );
+  let renderShop = <Loader size="large" />;
+
+  const styles = StyleSheet.create({
+    root: {
+      padding: 10,
+    },
+    title: {
+      marginVertical: 10,
+    },
+  });
 
   if (shop) {
     renderShop = (
       <ScrollView>
         <Heading details={shop} navigation={navigation} id={location_id} />
-        <Title
-          style={{
-            marginLeft: 20,
-            marginRight: 20,
-          }}>
-          Reviews
-        </Title>
-        {shop.reviews.map(
-          (
-            {
-              review_id,
-              review_body,
-              overall_rating,
-              price_rating,
-              quality_rating,
-              clenliness_rating,
-              likes,
-            },
-            index,
-          ) => (
-            <View key={index}>
-              <Review
-                details={{
-                  location_id,
-                  review_id,
-                  review_body,
-                  overall_rating,
-                  price_rating,
-                  quality_rating,
-                  clenliness_rating,
-                  likes,
-                }}
-              />
-            </View>
-          ),
-        )}
+        <View style={styles.root}>
+          <Title style={styles.title}>Reviews</Title>
+          {shop.reviews.map(
+            (
+              {
+                review_id,
+                review_body,
+                overall_rating,
+                price_rating,
+                quality_rating,
+                clenliness_rating,
+                likes,
+              },
+              index,
+            ) => (
+              <View key={index}>
+                <Review
+                  details={{
+                    location_id,
+                    review_id,
+                    review_body,
+                    overall_rating,
+                    price_rating,
+                    quality_rating,
+                    clenliness_rating,
+                    likes,
+                  }}
+                />
+              </View>
+            ),
+          )}
+        </View>
       </ScrollView>
     );
   }

@@ -12,6 +12,7 @@ import deleteReview from '../../functions/network/deleteReview';
 import getPhotoReview from '../../functions/network/getPhotoReview';
 import photoReview from '../../functions/network/photoReview';
 import showToast from '../../functions/showToast';
+import Star from '../Global/Star';
 
 export default function Review({
   details,
@@ -119,9 +120,6 @@ export default function Review({
   const handleEdit = () => {
     console.log('handleEdit: Running...');
     console.log(location_id);
-    // navigate to Edit Review Page
-    // what do I need:
-    // current data for current review (props)
     navigation.navigate('EditReview', {
       location_id,
       review_id,
@@ -167,6 +165,13 @@ export default function Review({
   };
 
   const styles = StyleSheet.create({
+    root: {
+      flexDirection: 'row',
+      marginHorizontal: 10,
+    },
+    reviewBody: {
+      width: '65%',
+    },
     like: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -181,26 +186,59 @@ export default function Review({
       borderColor: 'red',
       borderWidth: 1,
     },
+    starDetails: {
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+    },
   });
 
-  return (
+  const ReviewRatings = () => (
     <>
-      <View
-        style={{
-          flexDirection: 'row',
-          marginLeft: 20,
-          marginRight: 20,
-        }}>
-        <Paragraph
-          style={{
-            width: '70%',
-          }}>
-          {review_body}
-        </Paragraph>
+      <View style={styles.starDetails}>
+        <Paragraph>Overall: </Paragraph>
+        <Star
+          rating={Math.floor(overall_rating)}
+          starSize={10}
+          starMargin={0}
+          disabled
+        />
+      </View>
+      <View style={styles.starDetails}>
+        <Paragraph>Price: </Paragraph>
+        <Star
+          rating={Math.floor(price_rating)}
+          starSize={10}
+          starMargin={0}
+          disabled
+        />
+      </View>
+      <View style={styles.starDetails}>
+        <Paragraph>Quality: </Paragraph>
+        <Star
+          rating={Math.floor(quality_rating)}
+          starSize={10}
+          starMargin={0}
+          disabled
+        />
+      </View>
+      <View style={styles.starDetails}>
+        <Paragraph>Cleanliness: </Paragraph>
+        <Star
+          rating={Math.floor(clenliness_rating)}
+          starSize={10}
+          starMargin={0}
+          disabled
+        />
+      </View>
+    </>
+  );
+
+  return (
+    <View>
+      <View style={styles.root}>
+        <Paragraph style={styles.reviewBody}>💬 {review_body}</Paragraph>
         <View>
-          <Paragraph>
-            {`Overall: ${overall_rating}/5 \nPrice: ${price_rating}/5 \nQuality: ${quality_rating}/5  \nCleanliness: ${clenliness_rating}/5`}
-          </Paragraph>
+          <ReviewRatings />
           <View style={styles.buttons}>
             <View style={styles.like}>
               <LikeButton handler={() => handleLike()} size={20} />
@@ -285,7 +323,7 @@ export default function Review({
           </View>
         ) : null}
       </View>
-      <Divider />
-    </>
+      <Divider style={{borderWidth: 0.5}} />
+    </View>
   );
 }
