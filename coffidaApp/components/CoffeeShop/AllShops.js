@@ -117,7 +117,6 @@ export default function AllShops({navigation}) {
         offset={offset}
         setOffset={setOffset}
         numberOfShops={numberOfShops}
-        performSearch={performSearch}
       />
     </View>
   );

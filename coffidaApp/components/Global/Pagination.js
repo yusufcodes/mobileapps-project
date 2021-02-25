@@ -2,13 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Colors, IconButton, Paragraph} from 'react-native-paper';
 
-export default function Pagination({
-  limit,
-  offset,
-  setOffset,
-  numberOfShops,
-  performSearch,
-}) {
+export default function Pagination({limit, offset, setOffset, numberOfShops}) {
   const [currentPage, setCurrentPage] = useState(1);
 
   const styles = StyleSheet.create({
@@ -18,7 +12,6 @@ export default function Pagination({
       justifyContent: 'center',
     },
   });
-  console.log(`Number of shops Pagination: ${numberOfShops}`);
   const totalPages = Math.ceil(numberOfShops / limit);
 
   return (
@@ -32,13 +25,12 @@ export default function Pagination({
             console.log('Decreasing offset...');
             setOffset(offset - limit);
             setCurrentPage(currentPage - 1);
-            // performSearch();
           }
         }}
-        disabled={currentPage === 1 ? true : false}
+        disabled={currentPage === 1}
       />
       <Paragraph>
-        Page {currentPage} of {totalPages}
+        Page {currentPage} of {totalPages === 0 ? 1 : totalPages}
       </Paragraph>
       <IconButton
         icon="chevron-right"
@@ -48,12 +40,10 @@ export default function Pagination({
           if (currentPage < totalPages) {
             console.log('Increasing offset...');
             setOffset(offset + limit);
-            // setOffset((prevOffset) => prevOffset + limit);
             setCurrentPage(currentPage + 1);
-            // performSearch();
           }
         }}
-        disabled={currentPage === totalPages ? true : false}
+        disabled={currentPage === totalPages || totalPages === 0}
       />
     </View>
   );
