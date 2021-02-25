@@ -18,7 +18,7 @@ export default function Heading({details, navigation, id}) {
   } = details;
 
   const navigateReview = () => {
-    navigation.navigate('AddReview', {navigation, id});
+    navigation.navigate('AddReview', {id});
   };
 
   const styles = StyleSheet.create({

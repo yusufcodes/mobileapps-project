@@ -1,12 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, Keyboard, Image} from 'react-native';
-import {Title, TextInput, IconButton} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
+import {Title, TextInput, IconButton, HelperText} from 'react-native-paper';
 import Star from '../Global/Star';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import getToken from '../../functions/getToken';
 import getUser from '../../functions/network/getUser';
 import photoReview from '../../functions/network/photoReview';
+import addReview from '../../functions/network/addReview';
 
 const styles = StyleSheet.create({
   root: {
@@ -21,15 +23,22 @@ const styles = StyleSheet.create({
 
 const axios = require('axios');
 
-export default function AddReview({route, navigation}) {
+export default function AddReview({route}) {
   const {id} = route.params;
-  console.log(id);
+  const navigation = useNavigation();
 
+  // State for fields needed to add a review.
   const [overall, setOverall] = useState(0);
   const [price, setPrice] = useState(0);
   const [quality, setQuality] = useState(0);
   const [clean, setClean] = useState(0);
   const [review, setReview] = useState('');
+  const [validReview, setValidReview] = useState(true);
+
+  // State to check if values from profanity filter are mentioned
+  const [isProfanity, setIsProfanity] = useState(false);
+
+  // Photo state to determine if the user has attached a photo
   const [photoData, setPhotoData] = useState(null);
 
   const handleOverall = (rating) => setOverall(rating);
@@ -41,66 +50,105 @@ export default function AddReview({route, navigation}) {
 
   console.log(`photoData: ${photoData}`);
 
+  const profanityFilter = (review) => {
+    const checkTea = review.search('tea');
+    const checkCake = review.search('cake');
+    const checkPastry = review.search('pastry');
+    const checkPastries = review.search('pastries');
+
+    if (
+      checkTea > -1 ||
+      checkCake > -1 ||
+      checkPastry > -1 ||
+      checkPastries > -1
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
   const submitReview = async () => {
-    console.log('Submitting Review...');
+    // Reset error state values
+    setValidReview(true);
+    setIsProfanity(false);
     Keyboard.dismiss();
     const token = await getToken();
 
-    // TODO: Abstract method
-    const response = await axios({
-      method: 'post',
-      url: `http://10.0.2.2:3333/api/1.0.0/location/${id}/review`,
-      responseType: 'json',
-      headers: {'X-Authorization': token},
-      data: {
-        overall_rating: overall,
-        price_rating: price,
-        quality_rating: quality,
-        clenliness_rating: clean,
-        review_body: review,
-      },
-    }).then(async (response) => {
-      // Once review is submitted: check if we need to upload a photo
-      if (response?.status === 201) {
-        showToast('Review submitted!');
-        console.log('Review submitted!');
+    // Check that there is enough written in review body before submitting
+    if (review.length < 4) {
+      setValidReview(false);
+      return;
+    }
 
-        // Only runs if a photo has been taken.
-        if (photoData) {
-          console.log('AddReview: Photo found, attempting to upload...');
-          console.log('photo: getting user info');
-          // .. do logic to add photo to review
-          const userDetails = await getUser();
-          // console.log(userDetails.data.reviews);
-          const reviewToFind = userDetails.data.reviews.find(
-            (item, index) =>
-              review === item.review.review_body &&
-              clean === item.review.clenliness_rating &&
-              overall === item.review.overall_rating &&
-              price === item.review.price_rating &&
-              quality === item.review.quality_rating,
-          );
+    const checkIfProfanity = profanityFilter(review);
+    if (checkIfProfanity) {
+      setIsProfanity(true);
+      return;
+    }
 
-          console.log('got user');
-          console.log(`New Review ID: ${reviewToFind.review.review_id}`);
+    const data = {
+      overall_rating: overall,
+      price_rating: price,
+      quality_rating: quality,
+      clenliness_rating: clean,
+      review_body: review,
+    };
 
-          console.log('AddReview: Adding photo taken to the review...');
-          const uploadPhoto = await photoReview(
-            id,
-            reviewToFind.review.review_id,
-            photoData,
-          );
-          if (uploadPhoto.status === 200) {
-            console.log('AddReview: Photo successfully added to review');
-          }
-          console.log(
-            'AddReview: Review added with photo: navigating back now...',
-          );
+    // const response = await axios({
+    //   method: 'post',
+    //   url: `http://10.0.2.2:3333/api/1.0.0/location/${id}/review`,
+    //   responseType: 'json',
+    //   headers: {'X-Authorization': token},
+    //   data: {
+    //     overall_rating: overall,
+    //     price_rating: price,
+    //     quality_rating: quality,
+    //     clenliness_rating: clean,
+    //     review_body: review,
+    //   },
+    const response = await addReview(id, data);
+
+    if (response?.status === 201) {
+      showToast('Review submitted!');
+
+      // Only runs if a photo has been taken.
+      if (photoData) {
+        console.log('AddReview: Photo found, attempting to upload...');
+        console.log('photo: getting user info');
+        // .. do logic to add photo to review
+        const userDetails = await getUser();
+        // console.log(userDetails.data.reviews);
+        const reviewToFind = userDetails.data.reviews.find(
+          (item, index) =>
+            review === item.review.review_body &&
+            clean === item.review.clenliness_rating &&
+            overall === item.review.overall_rating &&
+            price === item.review.price_rating &&
+            quality === item.review.quality_rating,
+        );
+
+        console.log('got user');
+        console.log(`New Review ID: ${reviewToFind.review.review_id}`);
+
+        console.log('AddReview: Adding photo taken to the review...');
+        const uploadPhoto = await photoReview(
+          id,
+          reviewToFind.review.review_id,
+          photoData,
+        );
+        if (uploadPhoto.status === 200) {
+          console.log('AddReview: Photo successfully added to review');
         }
-
-        navigation.goBack();
+        console.log(
+          'AddReview: Review added with photo: navigating back now...',
+        );
       }
-    });
+
+      navigation.goBack();
+    } else {
+      showToast("Sorry, we couldn't submit your review. Please try again.");
+    }
   };
 
   return (
@@ -154,9 +202,24 @@ export default function AddReview({route, navigation}) {
           placeholder="Enter your review here..."
           multiline
           dense
+          error={!validReview}
           value={review}
           onChangeText={(review) => setReview(review)}
         />
+        {!validReview ? (
+          <HelperText type="error">
+            We need a little more info! Please ensure the review has at least
+            four letters.
+          </HelperText>
+        ) : null}
+        {isProfanity ? (
+          <HelperText type="error" visible={isProfanity}>
+            Sorry, it looks like you just mentioned tea, cakes and pastries in
+            your review. Please remove these from your review. (We prefer
+            comments on our amazing coffee!)
+          </HelperText>
+        ) : null}
+
         <Button text="Add Photo To Review" handler={handlePhoto} />
         <Image
           source={{
@@ -166,7 +229,6 @@ export default function AddReview({route, navigation}) {
 
         <Button text="Submit Review" handler={submitReview} />
       </View>
-      {/* {takePhoto ? <Camera /> : null} */}
     </>
   );
 }

@@ -1,8 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
-import {Title, TextInput, Paragraph, HelperText} from 'react-native-paper';
+import {
+  Title,
+  TextInput,
+  Paragraph,
+  HelperText,
+  Button,
+} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
-import Button from '../Global/Button';
+// import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import updateUser from '../../functions/network/updateUser';
 import checkValidEmail from '../../functions/checkValidEmail';
@@ -17,7 +23,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// TODO: Move password updating to a separate page?
 // TODO: Disable button if details are not valid
 export default function Update({route}) {
   const globalNavigation = useNavigation();
@@ -105,12 +110,14 @@ export default function Update({route}) {
         Please enter a password with more than five characters
       </HelperText>
       {/* TODO: Disable button if details are not valid */}
-      <Button text="Confirm Details" handler={updateHandler} />
-      <Paragraph>Want to update your password? Click below</Paragraph>
       <Button
-        text="Change Password"
-        handler={() => console.log('Go to new password reset page')}
-      />
+        uppercase
+        accessibilityLabel="Confirming and submitting all entered details"
+        mode="contained"
+        disabled={!validEmail}
+        onPress={() => updateHandler()}>
+        Confirm Details
+      </Button>
     </View>
   );
 }
