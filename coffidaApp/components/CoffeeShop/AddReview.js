@@ -19,9 +19,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  image: {
+    width: 100,
+    height: 100,
+  },
 });
-
-const axios = require('axios');
 
 export default function AddReview({route}) {
   const {id} = route.params;
@@ -73,7 +75,6 @@ export default function AddReview({route}) {
     setValidReview(true);
     setIsProfanity(false);
     Keyboard.dismiss();
-    const token = await getToken();
 
     // Check that there is enough written in review body before submitting
     if (review.length < 4) {
@@ -81,6 +82,7 @@ export default function AddReview({route}) {
       return;
     }
 
+    // Perform Profanity Filter check
     const checkIfProfanity = profanityFilter(review);
     if (checkIfProfanity) {
       setIsProfanity(true);
@@ -95,18 +97,6 @@ export default function AddReview({route}) {
       review_body: review,
     };
 
-    // const response = await axios({
-    //   method: 'post',
-    //   url: `http://10.0.2.2:3333/api/1.0.0/location/${id}/review`,
-    //   responseType: 'json',
-    //   headers: {'X-Authorization': token},
-    //   data: {
-    //     overall_rating: overall,
-    //     price_rating: price,
-    //     quality_rating: quality,
-    //     clenliness_rating: clean,
-    //     review_body: review,
-    //   },
     const response = await addReview(id, data);
 
     if (response?.status === 201) {
@@ -115,12 +105,10 @@ export default function AddReview({route}) {
       // Only runs if a photo has been taken.
       if (photoData) {
         console.log('AddReview: Photo found, attempting to upload...');
-        console.log('photo: getting user info');
-        // .. do logic to add photo to review
         const userDetails = await getUser();
-        // console.log(userDetails.data.reviews);
+        // Find the review the user has just uploaded
         const reviewToFind = userDetails.data.reviews.find(
-          (item, index) =>
+          (item) =>
             review === item.review.review_body &&
             clean === item.review.clenliness_rating &&
             overall === item.review.overall_rating &&
@@ -128,9 +116,7 @@ export default function AddReview({route}) {
             quality === item.review.quality_rating,
         );
 
-        console.log('got user');
         console.log(`New Review ID: ${reviewToFind.review.review_id}`);
-
         console.log('AddReview: Adding photo taken to the review...');
         const uploadPhoto = await photoReview(
           id,
@@ -138,7 +124,13 @@ export default function AddReview({route}) {
           photoData,
         );
         if (uploadPhoto.status === 200) {
+          showToast('Photo successfully added to review');
           console.log('AddReview: Photo successfully added to review');
+        } else {
+          showToast(
+            "Sorry, we couldn't upload your photo to the review. Please try again!",
+          );
+          return;
         }
         console.log(
           'AddReview: Review added with photo: navigating back now...',
@@ -220,13 +212,18 @@ export default function AddReview({route}) {
           </HelperText>
         ) : null}
 
-        <Button text="Add Photo To Review" handler={handlePhoto} />
-        <Image
-          source={{
-            uri: photoData?.uri,
-          }}
+        {photoData ? (
+          <Image
+            source={{
+              uri: photoData?.uri,
+            }}
+            style={styles.image}
+          />
+        ) : null}
+        <Button
+          text={photoData ? 'Retake Photo' : 'Add Photo To Review'}
+          handler={handlePhoto}
         />
-
         <Button text="Submit Review" handler={submitReview} />
       </View>
     </>
