@@ -95,6 +95,10 @@ export default function AllShops({navigation}) {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
+    noResults: {
+      textAlign: 'center',
+      marginVertical: 15,
+    },
   });
 
   const outputShops = () => {
@@ -126,7 +130,11 @@ export default function AllShops({navigation}) {
       ));
     }
 
-    return <Paragraph>No results!</Paragraph>;
+    return (
+      <Paragraph style={styles.noResults}>
+        No coffee shops - try refining your search!
+      </Paragraph>
+    );
   };
 
   return (
@@ -149,12 +157,14 @@ export default function AllShops({navigation}) {
       />
 
       {outputShops()}
-      <Pagination
-        limit={limit}
-        offset={offset}
-        setOffset={setOffset}
-        numberOfShops={numberOfShops}
-      />
+      {shops.length > 0 ? (
+        <Pagination
+          limit={limit}
+          offset={offset}
+          setOffset={setOffset}
+          numberOfShops={numberOfShops}
+        />
+      ) : null}
     </View>
   );
 }
