@@ -130,15 +130,15 @@ export default function Review({
   };
 
   const handleDelete = async () => {
-    const performDelete = await deleteReview(location_id, review_id);
-    if (performDelete) {
-      console.log('Review: Performing refreshReviews...');
-      await refreshReviews();
-      hideDialog();
-      showToast('Success: Review Deleted');
-    } else {
-      console.log('Delete failed?');
+    hideDialog();
+    const response = await deleteReview(location_id, review_id);
+    if (!response || response.status !== 200) {
+      showToast("Oops, we couldn't delete this review. Please try again");
+      return;
     }
+
+    showToast('Review Deleted');
+    await refreshReviews();
   };
 
   const deletePhotoFile = () => RNFS.unlink(serverPhoto?.uri);
