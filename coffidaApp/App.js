@@ -12,22 +12,19 @@ import Main from './components/Main';
 
 const Stack = createStackNavigator();
 
+// React Native Paper - app theme
 const theme = {
   ...PaperTheme,
   roundness: 2,
   colors: {
     ...PaperTheme.colors,
     primary: '#53433A',
-    accent: '#f1c40f', // secondary
-    // background:
-    // surface:
+    accent: '#f1c40f',
     text: '#2a150d',
-    // disabled:
-    // placeholder:
-    // backdrop:
   },
 };
 
+// React Navigation Theme
 const MyTheme = {
   ...DefaultTheme,
   colors: {
@@ -36,7 +33,6 @@ const MyTheme = {
     background: '#F4F3EF',
     card: '#9B4949',
     text: 'white',
-    // border: 'green',
   },
 };
 

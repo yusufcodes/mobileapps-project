@@ -27,6 +27,7 @@ export default function Search({
   list,
   setList,
   performSearch,
+  setOffset,
 }) {
   const [visible, setVisible] = React.useState(false);
 
@@ -155,6 +156,7 @@ export default function Search({
                 accessibilityRole="button"
                 onPress={() => {
                   hideDialog();
+                  setOffset(0);
                   performSearch();
                 }}>
                 Apply Filters

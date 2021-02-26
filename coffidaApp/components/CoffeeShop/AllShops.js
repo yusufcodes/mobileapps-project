@@ -26,6 +26,9 @@ export default function AllShops({navigation}) {
   const [numberOfShops, setNumberOfShops] = useState(0);
 
   const performSearch = async () => {
+    if (offset < 0) {
+      setOffset(0);
+    }
     setLoading(true);
     const responseTotalShops = await getShops(
       searchQuery,
@@ -122,7 +125,15 @@ export default function AllShops({navigation}) {
             </View>
           )}
           left={(props) => <List.Icon {...props} icon="coffee" />}
-          onPress={() => navigation.navigate('Shop', {id: item.id})}
+          onPress={() => {
+            // Reset search filters so when they return it is reset
+            setOverall('');
+            setCleanliness('');
+            setPrice('');
+            setQuality('');
+            setList('');
+            navigation.navigate('Shop', {id: item.id});
+          }}
           style={styles.rootListItem}
           titleStyle={styles.listTitle}
           descriptionStyle={styles.listDescription}
@@ -154,6 +165,7 @@ export default function AllShops({navigation}) {
         list={list}
         setList={setList}
         performSearch={performSearch}
+        setOffset={setOffset}
       />
 
       {outputShops()}
