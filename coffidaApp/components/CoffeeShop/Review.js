@@ -323,7 +323,7 @@ export default function Review({
           </View>
         ) : null}
       </View>
-      <Divider style={{borderWidth: 0.5}} />
+      <Divider style={{borderWidth: 0.2}} />
     </View>
   );
 }

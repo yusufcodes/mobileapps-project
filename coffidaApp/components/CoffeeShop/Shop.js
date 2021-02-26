@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {View, ScrollView, StyleSheet} from 'react-native';
 import {useFocusEffect} from '@react-navigation/native';
-import {ActivityIndicator, Colors, Title} from 'react-native-paper';
+import {Title, Divider} from 'react-native-paper';
 import Heading from './Shop/Heading';
 import Loader from '../Global/Loader';
 
@@ -70,6 +70,8 @@ export default function Shop({route, navigation}) {
         <Heading details={shop} navigation={navigation} id={location_id} />
         <View style={styles.root}>
           <Title style={styles.title}>Reviews</Title>
+          <Divider style={{borderWidth: 0.2}} />
+
           {shop.reviews.map(
             (
               {

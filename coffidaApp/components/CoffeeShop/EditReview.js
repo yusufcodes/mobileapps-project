@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
 import {View, Text, StyleSheet, Keyboard, Image} from 'react-native';
-import {Title, TextInput, IconButton, HelperText} from 'react-native-paper';
+import {Headline, TextInput, IconButton, HelperText} from 'react-native-paper';
 import RNFS from 'react-native-fs';
 import Star from '../Global/Star';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
-import getToken from '../../functions/getToken';
 import photoReview from '../../functions/network/photoReview';
 import profanityFilter from '../../functions/profanityFilter';
 import updateReview from '../../functions/network/updateReview';
@@ -24,11 +23,14 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
 });
 
-const axios = require('axios');
-
 export default function EditReview({route, navigation}) {
+  // TODO: Pass in name of the location
   const {
     location_id,
     review_id,
@@ -39,6 +41,11 @@ export default function EditReview({route, navigation}) {
     clenliness_rating,
     serverPhoto,
   } = route.params;
+
+  // TODO: Pass in name here
+  // useEffect(() => {
+  //   navigation.setOptions({title: `Add Review: ${name}`});
+  // }, [name]);
 
   const [overall, setOverall] = useState(overall_rating);
   const [price, setPrice] = useState(price_rating);
@@ -151,7 +158,7 @@ export default function EditReview({route, navigation}) {
   };
   return (
     <View style={styles.root}>
-      <Title>Edit Review</Title>
+      <Headline>Edit Review</Headline>
 
       <View style={styles.rating}>
         <Text>Overall: </Text>
@@ -221,24 +228,29 @@ export default function EditReview({route, navigation}) {
           <DeleteButton handler={() => deletePhotoFile()} size={20} />
         </View>
       ) : null}
-      <Button
-        accessibilityLabel="Open Camera"
-        accessibilityHint="Displays screen to allow for you to take a photo for your review"
-        accessibilityRole="button"
-        text={
-          photoData && !isPhotoDeleted ? 'Retake Photo' : 'Add Photo To Review'
-        }
-        handler={handlePhoto}
-      />
+      <View style={styles.buttonGroup}>
+        <Button
+          icon="camera"
+          accessibilityLabel="Open Camera"
+          accessibilityHint="Displays screen to allow for you to take a photo for your review"
+          accessibilityRole="button"
+          text={
+            photoData && !isPhotoDeleted
+              ? 'Retake Photo'
+              : 'Add Photo To Review'
+          }
+          handler={handlePhoto}
+        />
 
-      <Button
-        text="Submit Review"
-        accessibilityLabel="Submit Review"
-        accessibilityHint="Confirm action to submit your review"
-        accessibilityRole="button"
-        loading={isLoading}
-        handler={submitReview}
-      />
+        <Button
+          text="Submit Review"
+          accessibilityLabel="Submit Review"
+          accessibilityHint="Confirm action to submit your review"
+          accessibilityRole="button"
+          loading={isLoading}
+          handler={submitReview}
+        />
+      </View>
     </View>
   );
 }

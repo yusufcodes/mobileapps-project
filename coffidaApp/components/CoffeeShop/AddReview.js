@@ -2,11 +2,10 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, StyleSheet, Keyboard, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import RNFS from 'react-native-fs';
-import {Title, TextInput, IconButton, HelperText} from 'react-native-paper';
+import {Headline, TextInput, IconButton, HelperText} from 'react-native-paper';
 import Star from '../Global/Star';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
-import getToken from '../../functions/getToken';
 import getUser from '../../functions/network/getUser';
 import photoReview from '../../functions/network/photoReview';
 import addReview from '../../functions/network/addReview';
@@ -19,18 +18,28 @@ const styles = StyleSheet.create({
   },
   rating: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
+    marginVertical: 5,
   },
   image: {
     width: 100,
     height: 100,
   },
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginVertical: 20,
+  },
 });
 
 export default function AddReview({route}) {
-  const {id} = route.params;
+  const {id, name} = route.params;
   const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({title: `Add Review: ${name}`});
+  }, [name]);
 
   // State for fields needed to add a review.
   const [overall, setOverall] = useState(0);
@@ -144,7 +153,7 @@ export default function AddReview({route}) {
   return (
     <>
       <View style={styles.root}>
-        <Title>Add Review</Title>
+        <Headline>Add Review</Headline>
 
         <View style={styles.rating}>
           <Text>Overall: </Text>
@@ -187,10 +196,11 @@ export default function AddReview({route}) {
         </View>
 
         <TextInput
-          label="Review"
           mode="outlined"
           placeholder="Enter your review here..."
+          label="Review"
           multiline
+          numberOfLines={6}
           dense
           error={!validReview}
           value={review}
@@ -222,25 +232,24 @@ export default function AddReview({route}) {
             <DeleteButton handler={() => deletePhotoFile()} size={20} />
           </View>
         ) : null}
-        <Button
-          accessibilityLabel="Open Camera"
-          accessibilityHint="Displays screen to allow for you to take a photo for your review"
-          accessibilityRole="button"
-          text={
-            photoData && !isPhotoDeleted
-              ? 'Retake Photo'
-              : 'Add Photo To Review'
-          }
-          handler={handlePhoto}
-        />
-        <Button
-          accessibilityLabel="Submit Review"
-          accessibilityHint="Confirm action to submit your review"
-          accessibilityRole="button"
-          text="Submit Review"
-          loading={isLoading}
-          handler={submitReview}
-        />
+        <View style={styles.buttonGroup}>
+          <Button
+            icon="camera"
+            accessibilityLabel="Open Camera"
+            accessibilityHint="Displays screen to allow for you to take a photo for your review"
+            accessibilityRole="button"
+            text={photoData && !isPhotoDeleted ? 'Retake Photo' : 'Add Photo'}
+            handler={handlePhoto}
+          />
+          <Button
+            accessibilityLabel="Submit Review"
+            accessibilityHint="Confirm action to submit your review"
+            accessibilityRole="button"
+            text="Submit"
+            loading={isLoading}
+            handler={submitReview}
+          />
+        </View>
       </View>
     </>
   );

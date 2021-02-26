@@ -17,12 +17,13 @@ export default function Heading({details, navigation, id}) {
     qualityRating,
     cleanlinessRating,
   } = details;
+
   useEffect(() => {
     navigation.setOptions({title: name});
   }, []);
 
   const navigateReview = () => {
-    navigation.navigate('AddReview', {id});
+    navigation.navigate('AddReview', {id, name});
   };
 
   const styles = StyleSheet.create({
