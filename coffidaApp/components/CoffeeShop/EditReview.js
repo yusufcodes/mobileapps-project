@@ -1,11 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Keyboard, Image} from 'react-native';
 import {Headline, TextInput, HelperText} from 'react-native-paper';
-import RNFS from 'react-native-fs';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import addPhotoReview from '../../functions/network/addPhotoReview';
-import deletePhotoReview from '../../functions/network/deletePhotoReview';
 import profanityFilter from '../../functions/profanityFilter';
 import updateReview from '../../functions/network/updateReview';
 import commonStyles from '../../styles/commonStyles';
@@ -49,8 +47,6 @@ export default function EditReview({route, navigation}) {
   const [isPhotoDeleted, setIsPhotoDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [reviewId, setReviewId] = useState(null);
-
   // State to check if values from profanity filter are mentioned
   const [isProfanity, setIsProfanity] = useState(false);
 
@@ -66,23 +62,6 @@ export default function EditReview({route, navigation}) {
   const handlePhoto = () => {
     setIsPhotoDeleted(false);
     navigation.navigate('UploadPhoto', {setPhotoData});
-  };
-
-  // Remove photo from local storage
-  const deletePhotoFile = () => {
-    RNFS.unlink(photoData?.uri);
-    setPhotoData(null);
-    setIsPhotoDeleted(true);
-    showToast('Photo removed');
-  };
-
-  const handleDeletePhoto = async () => {
-    const response = await deletePhotoReview(location_id, reviewId);
-    if (response.status !== 200) {
-      showToast("Sorry, we couldn't delete this photo. Please try again.");
-      return;
-    }
-    deletePhotoFile();
   };
 
   const submitReview = async () => {
@@ -215,14 +194,6 @@ export default function EditReview({route, navigation}) {
               uri: photoData?.uri,
             }}
             style={styles.image}
-          />
-          <Button
-            icon="delete"
-            accessibilityLabel="Delete photo"
-            accessibilityHint="Remove the photo that has been taken for this review"
-            accessibilityRole="button"
-            text="Delete Photo"
-            handler={handleDeletePhoto}
           />
         </View>
       ) : null}
