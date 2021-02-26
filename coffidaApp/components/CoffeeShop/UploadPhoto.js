@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Camera from '../Global/Camera';
 import showToast from '../../functions/showToast';
 

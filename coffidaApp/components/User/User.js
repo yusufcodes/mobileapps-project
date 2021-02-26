@@ -102,6 +102,8 @@ export default function User({navigation}) {
   const displayUpdate = () => navigation.navigate('Update', {details});
 
   const refreshReviews = async () => {
+    console.log('Refreshing reviews...');
+    showToast('Refreshing Reviews...');
     const response = await performGetUser();
     const {reviews} = response?.data;
     setReviews(reviews);

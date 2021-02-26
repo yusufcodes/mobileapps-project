@@ -10,7 +10,7 @@ import getLocation from '../../functions/network/getLocation';
 import likeReview from '../../functions/network/likeReview';
 import deleteReview from '../../functions/network/deleteReview';
 import getPhotoReview from '../../functions/network/getPhotoReview';
-import photoReview from '../../functions/network/photoReview';
+import deletePhotoReview from '../../functions/network/deletePhotoReview';
 import showToast from '../../functions/showToast';
 import Star from '../Global/Star';
 
@@ -35,19 +35,30 @@ export default function Review({
   const [serverPhoto, setServerPhoto] = useState(null);
 
   const getReviewPhoto = async () => {
-    if (location_id && review_id) {
-      const getPhoto = await getPhotoReview(location_id, review_id);
-      if (getPhoto?.status === 200) {
+    console.log('Running getReviewPhoto...');
+    const getPhoto = await getPhotoReview(location_id, review_id);
+    if (getPhoto?.status === 200) {
+      if (!getPhoto.data) {
+        console.log('No photo found');
+        setServerPhoto(null);
+      } else {
+        console.log('Photo found - setting the serverPhoto state');
         setServerPhoto(getPhoto.data);
+        return;
       }
+      // console.log('getReviewPhoto: Photo found');
+      // setServerPhoto(getPhoto.data);
     }
+    setServerPhoto(null);
   };
+  const [photoDeleted, setPhotoDeleted] = React.useState(false);
 
   useEffect(() => {
     (async function () {
       await getReviewPhoto();
     })();
-  }, []);
+  }, [photoDeleted]);
+
   const [visible, setVisible] = React.useState(false);
   const [visibleDialogPhoto, setVisibleDialogPhoto] = React.useState(false);
 
@@ -143,23 +154,37 @@ export default function Review({
     await refreshReviews();
   };
 
-  const deletePhotoFile = () => RNFS.unlink(serverPhoto?.uri);
+  // const deletePhotoFile = () => RNFS.unlink(serverPhoto?.uri);
+
+  // const handleDeletePhoto = async () => {
+  //   hideDialogPhoto();
+  //   const deletePhoto = true;
+  //   const response = await photoReview(location_id, review_id, deletePhoto);
+  //   if (response?.status === 200) {
+  //     console.log('Review: Photo successfully deleted');
+  //     console.log(serverPhoto.uri);
+  //     deletePhotoFile();
+  //     await refreshReviews();
+  //     await getReviewPhoto();
+  //     console.log('Review: Reloaded everything!');
+  //   } else {
+  //     console.log('Error deleting the photo');
+  //   }
+  // };
 
   const handleDeletePhoto = async () => {
     hideDialogPhoto();
-    console.log('deleting photo...');
-    const deletePhoto = true;
-    const response = await photoReview(location_id, review_id, deletePhoto);
-    if (response?.status === 200) {
-      console.log('Review: Photo successfully deleted');
-      console.log(serverPhoto.uri);
-      deletePhotoFile();
-      await refreshReviews();
-      await getReviewPhoto();
-      console.log('Review: Reloaded everything!');
-    } else {
-      console.log('Error deleting the photo');
+    const response = await deletePhotoReview(location_id, review_id);
+    if (response.status !== 200) {
+      showToast("Sorry, we couldn't delete this photo. Please try again.");
+      return;
     }
+    // deletePhotoFile();
+    // RNFS.unlink(serverPhoto?.uri);
+    await refreshReviews();
+    setPhotoDeleted(true);
+    // await getReviewPhoto();
+    console.log('Review: Reloaded everything!');
   };
 
   const styles = StyleSheet.create({
@@ -291,7 +316,13 @@ export default function Review({
         ) : null}
         {editable && serverPhoto ? (
           <View>
-            <DeleteButton handler={() => showDialogPhoto()} size={20} />
+            <DeleteButton
+              accessibilityLabel="Delete photo"
+              accessibilityHint="Remove the photo that has been taken for this review"
+              accessibilityRole="button"
+              handler={() => showDialogPhoto()}
+              size={20}
+            />
             <Portal>
               <Dialog visible={visibleDialogPhoto} onDismiss={hideDialogPhoto}>
                 <Dialog.Title>Delete Photo from Review</Dialog.Title>

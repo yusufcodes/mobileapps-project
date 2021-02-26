@@ -1,7 +1,7 @@
 import React from 'react';
-import {IconButton, Colors} from 'react-native-paper';
+import {IconButton} from 'react-native-paper';
 
-export default function DeleteButton(props) {
+export default function DeleteButton(props, {...rest}) {
   const {handler, size = 30} = props;
   return (
     <IconButton
@@ -11,6 +11,7 @@ export default function DeleteButton(props) {
         marginHorizontal: 0,
       }}
       onPress={() => handler()}
+      {...rest}
     />
   );
 }

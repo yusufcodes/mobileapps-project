@@ -6,7 +6,7 @@ import {Headline, TextInput, HelperText} from 'react-native-paper';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import getUser from '../../functions/network/getUser';
-import photoReview from '../../functions/network/photoReview';
+import addPhotoReview from '../../functions/network/addPhotoReview';
 import addReview from '../../functions/network/addReview';
 import profanityFilter from '../../functions/profanityFilter';
 import commonStyles from '../../styles/commonStyles';
@@ -106,7 +106,8 @@ export default function AddReview({route}) {
             price === item.review.price_rating &&
             quality === item.review.quality_rating,
         );
-        const uploadPhoto = await photoReview(
+        // setReviewId(reviewToFind.review.review_id);
+        const uploadPhoto = await addPhotoReview(
           id,
           reviewToFind.review.review_id,
           photoData,

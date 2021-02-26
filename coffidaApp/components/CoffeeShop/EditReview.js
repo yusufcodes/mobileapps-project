@@ -4,7 +4,8 @@ import {Headline, TextInput, HelperText} from 'react-native-paper';
 import RNFS from 'react-native-fs';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
-import photoReview from '../../functions/network/photoReview';
+import addPhotoReview from '../../functions/network/addPhotoReview';
+import deletePhotoReview from '../../functions/network/deletePhotoReview';
 import profanityFilter from '../../functions/profanityFilter';
 import updateReview from '../../functions/network/updateReview';
 import commonStyles from '../../styles/commonStyles';
@@ -48,6 +49,8 @@ export default function EditReview({route, navigation}) {
   const [isPhotoDeleted, setIsPhotoDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const [reviewId, setReviewId] = useState(null);
+
   // State to check if values from profanity filter are mentioned
   const [isProfanity, setIsProfanity] = useState(false);
 
@@ -71,6 +74,15 @@ export default function EditReview({route, navigation}) {
     setPhotoData(null);
     setIsPhotoDeleted(true);
     showToast('Photo removed');
+  };
+
+  const handleDeletePhoto = async () => {
+    const response = await deletePhotoReview(location_id, reviewId);
+    if (response.status !== 200) {
+      showToast("Sorry, we couldn't delete this photo. Please try again.");
+      return;
+    }
+    deletePhotoFile();
   };
 
   const submitReview = async () => {
@@ -120,7 +132,7 @@ export default function EditReview({route, navigation}) {
       showToast('Review edited!');
       // Perform logic to add photo that is taken to the review, only if a photo is taken
       if (photoData) {
-        const uploadPhoto = await photoReview(
+        const uploadPhoto = await addPhotoReview(
           location_id,
           review_id,
           photoData,
@@ -210,7 +222,7 @@ export default function EditReview({route, navigation}) {
             accessibilityHint="Remove the photo that has been taken for this review"
             accessibilityRole="button"
             text="Delete Photo"
-            handler={deletePhotoFile}
+            handler={handleDeletePhoto}
           />
         </View>
       ) : null}
