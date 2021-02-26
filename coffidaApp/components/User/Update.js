@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
 import {
-  Title,
+  Headline,
   TextInput,
   Paragraph,
   HelperText,
@@ -12,13 +12,14 @@ import showToast from '../../functions/showToast';
 import updateUser from '../../functions/network/updateUser';
 import checkValidEmail from '../../functions/checkValidEmail';
 import checkValidPassword from '../../functions/checkValidPassword';
+import commonStyles from '../../styles/commonStyles';
 
 const styles = StyleSheet.create({
   root: {
     padding: 30,
   },
   heading: {
-    textAlign: 'center',
+    marginVertical: 20,
   },
 });
 
@@ -71,20 +72,23 @@ export default function Update({route}) {
   };
   return (
     <View style={styles.root}>
-      <Title style={styles.heading}>Update Details</Title>
+      <Headline style={styles.heading}>Update Details</Headline>
       <TextInput
+        style={commonStyles.inputSpacing}
         label="First Name"
         value={firstName}
         mode="outlined"
         onChangeText={(firstName) => setFirstName(firstName)}
       />
       <TextInput
+        style={commonStyles.inputSpacing}
         label="Last Name"
         value={lastName}
         mode="outlined"
         onChangeText={(lastName) => setLastName(lastName)}
       />
       <TextInput
+        style={commonStyles.inputSpacing}
         label="Email"
         value={email}
         mode="outlined"
@@ -93,10 +97,14 @@ export default function Update({route}) {
           setEmail(email);
         }}
       />
-      <HelperText type="error" visible={!validEmail && email.length > 0}>
-        Please enter a valid email address
-      </HelperText>
+      {!validEmail && email.length > 0 ? (
+        <HelperText type="error" visible={!validEmail && email.length > 0}>
+          Please enter a valid email address
+        </HelperText>
+      ) : null}
+
       <TextInput
+        style={commonStyles.inputSpacing}
         secureTextEntry
         label="Password"
         value={password}
@@ -104,11 +112,16 @@ export default function Update({route}) {
         error={!validPassword && password.length > 0}
         onChangeText={(password) => setPassword(password)}
       />
-      <HelperText type="error" visible={!validPassword && password.length > 0}>
-        Please enter a password with more than five characters
-      </HelperText>
-      {/* TODO: Disable button if details are not valid */}
+      {!validPassword && password.length > 0 ? (
+        <HelperText
+          type="error"
+          visible={!validPassword && password.length > 0}>
+          Please enter a password with more than five characters
+        </HelperText>
+      ) : null}
+
       <Button
+        style={commonStyles.buttonSpacing}
         uppercase
         accessibilityLabel="Confirm details"
         accessibilityHint="Confirming and submitting any updated user information"

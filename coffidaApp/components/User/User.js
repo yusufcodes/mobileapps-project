@@ -67,46 +67,11 @@ export default function User({navigation}) {
     }
   }, [loggedOut, errorLogOut]);
 
-  // TODO: Remove when finised styling
-  // useEffect(() => {
-  //   (async function () {
-  //     setLoadingDetails(true);
-  //     const response = await performGetUser();
-
-  //     if (!response) {
-  //       return;
-  //     }
-
-  //     const {
-  //       email,
-  //       first_name,
-  //       last_name,
-  //       favourite_locations,
-  //       liked_reviews,
-  //       reviews,
-  //     } = response?.data;
-  //     setDetails({
-  //       email,
-  //       firstName: first_name,
-  //       lastName: last_name,
-  //     });
-  //     setLoadingDetails(false);
-  //     if (favourite_locations.length > 0) {
-  //       setLocations(favourite_locations);
-  //     }
-  //     if (reviews.length > 0) {
-  //       setReviews(reviews);
-  //     }
-  //     if (liked_reviews.length > 0) {
-  //       setLikedReviews(liked_reviews);
-  //     }
-  //   })();
-  // }, []);
-
   useFocusEffect(
     React.useCallback(() => {
       (async function () {
         setLoadingDetails(true);
+        showToast('Loading details...');
         const response = await performGetUser();
 
         if (!response) {
@@ -143,10 +108,6 @@ export default function User({navigation}) {
   };
 
   const styles = StyleSheet.create({
-    root: {
-      // padding: 30,
-    },
-    heading: {},
     singleDetail: {
       flexDirection: 'row',
     },
@@ -195,7 +156,8 @@ export default function User({navigation}) {
         <Headline style={styles.heading}>My Profile</Headline>
         <View style={styles.details}>
           <Title>Personal Details</Title>
-          {details && !loadingDetails ? (
+          {/* removed extra boolean logic here */}
+          {details ? (
             <>
               <View style={styles.singleDetail}>
                 <Paragraph style={{fontWeight: 'bold'}}>First Name: </Paragraph>
