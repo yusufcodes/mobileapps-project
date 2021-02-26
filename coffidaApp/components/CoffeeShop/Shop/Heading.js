@@ -55,10 +55,6 @@ export default function Heading({details, navigation, id}) {
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
-    reviewButton: {
-      padding: 5,
-      margin: 10,
-    },
   });
 
   const performFavourite = async (location_id, unfav = false) => {
@@ -82,8 +78,6 @@ export default function Heading({details, navigation, id}) {
 
     // Retrieve list of favourited locations
     const {favourite_locations} = userDetails.data;
-
-    // *** TODO: New method for performing like, same as Review format.
 
     // Empty favourite locations: can add location to favourites without checking
     if (favourite_locations.length === 0) {

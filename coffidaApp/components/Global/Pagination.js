@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {Colors, IconButton, Paragraph} from 'react-native-paper';
+import {View, StyleSheet} from 'react-native';
+import {IconButton, Paragraph} from 'react-native-paper';
 import commonStyles from '../../styles/commonStyles';
 
 export default function Pagination({limit, offset, setOffset, numberOfShops}) {
+  // Set initial page to 1
   const [currentPage, setCurrentPage] = useState(1);
 
   const styles = StyleSheet.create({
@@ -22,6 +23,8 @@ export default function Pagination({limit, offset, setOffset, numberOfShops}) {
       marginHorizontal: 25,
     },
   });
+
+  // Calculate total pages for pagination to show user
   const totalPages = Math.ceil(numberOfShops / limit);
 
   return (
@@ -34,6 +37,8 @@ export default function Pagination({limit, offset, setOffset, numberOfShops}) {
         icon="chevron-left"
         size={35}
         onPress={() => {
+          // Use setters to manipulate offset in search query (in AllShops)
+          // This will perform the change in page
           if (currentPage > 1) {
             console.log('Decreasing offset...');
             setOffset(offset - limit);
@@ -52,6 +57,8 @@ export default function Pagination({limit, offset, setOffset, numberOfShops}) {
         style={[commonStyles.primaryColor, styles.button]}
         icon="chevron-right"
         size={35}
+        // Use setters to manipulate offset in search query (in AllShops)
+        // This will perform the change in page
         onPress={() => {
           if (currentPage < totalPages) {
             console.log('Increasing offset...');

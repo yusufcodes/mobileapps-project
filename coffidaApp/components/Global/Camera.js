@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Button, IconButton} from 'react-native-paper';
+import {IconButton} from 'react-native-paper';
 import {RNCamera} from 'react-native-camera';
 import showToast from '../../functions/showToast';
 
@@ -21,6 +21,8 @@ const styles = StyleSheet.create({
     margin: 20,
   },
 });
+
+// Camera class mostly copied from documentation
 class Camera extends Component {
   takePicture = async () => {
     showToast('Capturing photo...');
@@ -49,6 +51,7 @@ class Camera extends Component {
             accessibilityLabel="Capture Photo"
             accessibilityHint="Take the photo in the frame to use in your review"
             accessibilityRole="button"
+            // Style guide causes an error here but intentionally left it for Camera to work.
             onPress={this.takePicture.bind(this)}
           />
         </View>

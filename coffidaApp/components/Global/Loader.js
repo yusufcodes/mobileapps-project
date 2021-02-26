@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import {ActivityIndicator, Colors} from 'react-native-paper';
+import {ActivityIndicator} from 'react-native-paper';
 import commonStyles from '../../styles/commonStyles';
 
 export default function Loader({size = 'small'}) {

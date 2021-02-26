@@ -2,9 +2,6 @@ import getToken from '../getToken';
 
 const axios = require('axios');
 
-// Favourite: POST - /location/{loc_id}/favourite
-// Unfavourite: DELETE - /location/{loc_id}/favourite
-
 export default async function favouriteLocation(locationId, unfav = false) {
   const action = unfav ? 'delete' : 'post';
   const token = await getToken();

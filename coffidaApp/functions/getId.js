@@ -7,7 +7,7 @@ const getToken = async () => {
       return value;
     }
   } catch (e) {
-    console.log(`function: getToken - Error: ${e}`);
+    console.log(`function: getId - Error: ${e}`);
   }
 };
 

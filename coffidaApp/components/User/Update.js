@@ -1,12 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Keyboard} from 'react-native';
-import {
-  Headline,
-  TextInput,
-  Paragraph,
-  HelperText,
-  Button,
-} from 'react-native-paper';
+import {Headline, TextInput, HelperText, Button} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import showToast from '../../functions/showToast';
 import updateUser from '../../functions/network/updateUser';
@@ -38,6 +32,7 @@ export default function Update({route}) {
   const [password, setPassword] = useState('');
   const [validPassword, setValidPassword] = React.useState(true);
 
+  // Perform validation each time the user changes the value of email or password
   useEffect(() => {
     checkValidEmail(email, setValidEmail);
     checkValidPassword(password, setValidPassword);

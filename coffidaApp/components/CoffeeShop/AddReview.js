@@ -21,6 +21,7 @@ export default function AddReview({route}) {
   const {id, name} = route.params;
   const navigation = useNavigation();
 
+  // Setting title of the tab only once the screen has rendered
   useEffect(() => {
     navigation.setOptions({title: `Add Review: ${name}`});
   }, [name]);
@@ -108,7 +109,6 @@ export default function AddReview({route}) {
             price === item.review.price_rating &&
             quality === item.review.quality_rating,
         );
-        // setReviewId(reviewToFind.review.review_id);
         const uploadPhoto = await addPhotoReview(
           id,
           reviewToFind.review.review_id,

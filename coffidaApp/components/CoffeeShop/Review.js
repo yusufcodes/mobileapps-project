@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
-import RNFS from 'react-native-fs';
 import {Paragraph, Divider, Dialog, Portal, Button} from 'react-native-paper';
 import LikeButton from '../Global/LikeButton';
 import EditButton from '../Global/EditButton';
@@ -32,17 +31,17 @@ export default function Review({
     likes,
   } = details;
 
+  // Store photo if one exists on a review
   const [serverPhoto, setServerPhoto] = useState(null);
 
   const getReviewPhoto = async () => {
     console.log('Running getReviewPhoto...');
     const getPhoto = await getPhotoReview(location_id, review_id);
+    // Setting the photo retrieved from server if exists otherwise null, so photo doesnt render
     if (getPhoto?.status === 200) {
       if (!getPhoto.data) {
-        console.log('No photo found');
         setServerPhoto(null);
       } else {
-        console.log('Photo found - setting the serverPhoto state');
         setServerPhoto(getPhoto.data);
         return;
       }
@@ -51,6 +50,7 @@ export default function Review({
   };
   const [photoDeleted, setPhotoDeleted] = React.useState(false);
 
+  // Refresh review photo if the photoDeleted boolean becomes true, so it disappears
   useEffect(() => {
     (async function () {
       await getReviewPhoto();
@@ -68,10 +68,11 @@ export default function Review({
 
   const [reviewLikes, setReviewLikes] = useState(likes);
 
+  // Retrieving number of likes on current review
   const getLikes = async () => {
-    console.log('getLikes: Running...');
     const response = await getLocation(location_id);
     const {location_reviews: reviews} = response?.data;
+
     const review = reviews.find(
       (currentReview) => currentReview.review_id === review_id,
     );
@@ -79,7 +80,6 @@ export default function Review({
       console.log('getLikes: Unable to find review...');
       return null;
     }
-    console.log('getLikes: New likes retrieved!');
     return review.likes;
   };
 
@@ -93,8 +93,6 @@ export default function Review({
   };
 
   const handleLike = async () => {
-    console.log('Running handleLike...');
-
     const userDetails = await getUser();
     if (!userDetails) {
       showToast('Review could not be liked/unliked. Please try again.');
@@ -125,7 +123,6 @@ export default function Review({
   };
 
   const handleEdit = () => {
-    console.log('handleEdit: Running...');
     console.log(location_id);
     navigation.navigate('EditReview', {
       location_id,
@@ -140,6 +137,7 @@ export default function Review({
     });
   };
 
+  // Delete review handler
   const handleDelete = async () => {
     hideDialog();
     const response = await deleteReview(location_id, review_id);
@@ -152,24 +150,7 @@ export default function Review({
     await refreshReviews();
   };
 
-  // const deletePhotoFile = () => RNFS.unlink(serverPhoto?.uri);
-
-  // const handleDeletePhoto = async () => {
-  //   hideDialogPhoto();
-  //   const deletePhoto = true;
-  //   const response = await photoReview(location_id, review_id, deletePhoto);
-  //   if (response?.status === 200) {
-  //     console.log('Review: Photo successfully deleted');
-  //     console.log(serverPhoto.uri);
-  //     deletePhotoFile();
-  //     await refreshReviews();
-  //     await getReviewPhoto();
-  //     console.log('Review: Reloaded everything!');
-  //   } else {
-  //     console.log('Error deleting the photo');
-  //   }
-  // };
-
+  // Delete photo handler
   const handleDeletePhoto = async () => {
     hideDialogPhoto();
     const response = await deletePhotoReview(location_id, review_id);
@@ -177,12 +158,8 @@ export default function Review({
       showToast("Sorry, we couldn't delete this photo. Please try again.");
       return;
     }
-    // deletePhotoFile();
-    // RNFS.unlink(serverPhoto?.uri);
     await refreshReviews();
     setPhotoDeleted(true);
-    // await getReviewPhoto();
-    console.log('Review: Reloaded everything!');
   };
 
   const styles = StyleSheet.create({
@@ -213,6 +190,7 @@ export default function Review({
     },
   });
 
+  // Component to display the review ratings to avoid repetition
   const ReviewRatings = () => (
     <>
       <View style={styles.starDetails}>
@@ -265,6 +243,7 @@ export default function Review({
               <LikeButton handler={() => handleLike()} size={20} />
               <Paragraph>{reviewLikes}</Paragraph>
             </View>
+            {/* Conditionally render edit buttons on review only if being used in User component  */}
             {editable ? (
               <>
                 <View>
@@ -304,6 +283,7 @@ export default function Review({
           </View>
         </View>
       </View>
+      {/* Conditionally render photo if it exists */}
       <View>
         {serverPhoto ? (
           <Image
@@ -312,6 +292,7 @@ export default function Review({
             style={styles.image}
           />
         ) : null}
+        {/* Conditionally render delete photo button */}
         {editable && serverPhoto ? (
           <View>
             <DeleteButton

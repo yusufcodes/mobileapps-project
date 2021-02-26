@@ -10,22 +10,29 @@ import Loader from '../Global/Loader';
 import Star from '../Global/Star';
 
 export default function AllShops({navigation}) {
+  // Array to store each shop. Iterated over to output them in a List
   const [shops, setShops] = useState([]);
 
+  // Search functionality state
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = (query) => setSearchQuery(query);
 
+  // Filter query parameter state
   const [overall, setOverall] = useState('');
   const [price, setPrice] = useState('');
   const [quality, setQuality] = useState('');
   const [cleanliness, setCleanliness] = useState('');
   const [list, setList] = useState('');
+
   const [loading, setLoading] = useState(true);
+
+  // State values for pagination
   const [limit] = useState(2);
   const [offset, setOffset] = useState(0);
   const [numberOfShops, setNumberOfShops] = useState(0);
 
   const performSearch = async () => {
+    // Reset offset if it happens to go below 0
     if (offset < 0) {
       setOffset(0);
     }
@@ -71,6 +78,8 @@ export default function AllShops({navigation}) {
     setShops(arrayOfShops);
   };
 
+  /* If the user changes their search query or state, search will rerun to refresh the page. 
+  Also runs when this tab is focused on again incase there are changes since leaving it. */
   useFocusEffect(
     React.useCallback(() => {
       performSearch();
@@ -78,10 +87,6 @@ export default function AllShops({navigation}) {
   );
 
   const styles = StyleSheet.create({
-    main: {
-      flexDirection: 'column',
-      justifyContent: 'space-evenly',
-    },
     rootListItem: {
       paddingHorizontal: 30,
     },
@@ -126,7 +131,7 @@ export default function AllShops({navigation}) {
           )}
           left={(props) => <List.Icon {...props} icon="coffee" />}
           onPress={() => {
-            // Reset search filters so when they return it is reset
+            // Reset search filters once user leaves AllShops component
             setOverall('');
             setCleanliness('');
             setPrice('');
@@ -150,6 +155,9 @@ export default function AllShops({navigation}) {
 
   return (
     <View>
+      {/* Note: Lots of props passed to manipulate state in child component
+      In future, it may be better to use React Context but did not have time to refactor.
+      */}
       <Search
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}

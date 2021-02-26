@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, StyleSheet, Keyboard} from 'react-native';
+import {View, Keyboard} from 'react-native';
 import {
   TextInput,
   Headline,
@@ -14,9 +14,12 @@ import login from '../../functions/network/login';
 import commonStyles from '../../styles/commonStyles';
 
 export default function Login({navigation}) {
+  // State for user input
   const [email, setEmail] = React.useState('');
   const [validEmail, setValidEmail] = React.useState(true);
   const [password, setPassword] = React.useState('');
+
+  // State for error handling
   const [validPassword, setValidPassword] = React.useState(true);
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [invalidLogin, setInvalidLogin] = React.useState(false);
@@ -44,13 +47,11 @@ export default function Login({navigation}) {
     }
   }, [loggedIn, loginError, invalidLogin]);
 
-  const styles = StyleSheet.create({});
-
   const performLogin = async () => {
     Keyboard.dismiss();
     setLoginError(false);
     setInvalidLogin(false);
-    setLoggedIn(false); // TODO: See if this works for logout
+    setLoggedIn(false);
     await login(email, password, setLoggedIn, setLoginError, setInvalidLogin);
   };
 

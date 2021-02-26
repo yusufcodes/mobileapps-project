@@ -1,3 +1,4 @@
+// Individually searches for forbidden words and returns true/false to determine for validation
 const profanityFilter = (review) => {
   const checkTea = review.search('tea');
   const checkCake = review.search('cake');

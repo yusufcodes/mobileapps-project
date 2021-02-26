@@ -12,5 +12,7 @@ export default async function getPhotoReview(locationId, reviewId) {
     });
 
     return response;
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }

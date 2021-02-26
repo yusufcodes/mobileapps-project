@@ -12,6 +12,7 @@ export default function Main() {
       <Tab.Screen
         name="Coffee"
         component={CoffeeStackScreen}
+        // ESLint Warning: Wasn't sure how to fix this here so left it as it is.
         options={{
           tabBarIcon: ({color, size = 20}) => (
             <MaterialCommunityIcons

@@ -18,7 +18,6 @@ import showToast from '../../functions/showToast';
 import Loader from '../Global/Loader';
 import commonStyles from '../../styles/commonStyles';
 
-// TODO: Use loading boolean for everything, not just user
 export default function User({navigation}) {
   const globalNavigation = useNavigation();
 
@@ -75,6 +74,7 @@ export default function User({navigation}) {
         const response = await performGetUser();
 
         if (!response) {
+          showToast("Sorry, we couldn't fetch your details. Please try again.");
           return;
         }
 
@@ -158,7 +158,6 @@ export default function User({navigation}) {
         <Headline style={styles.heading}>My Profile</Headline>
         <View style={styles.details}>
           <Title>Personal Details</Title>
-          {/* removed extra boolean logic here */}
           {details ? (
             <>
               <View style={styles.singleDetail}>

@@ -4,7 +4,6 @@ import {
   TextInput,
   Headline,
   Subheading,
-  Caption,
   Button,
   Paragraph,
   HelperText,
@@ -16,11 +15,14 @@ import checkValidPassword from '../../functions/checkValidPassword';
 import commonStyles from '../../styles/commonStyles';
 
 export default function SignUp({navigation}) {
+  // State values for input fields
   const [firstName, setFirstName] = React.useState('');
   const [lastName, setLastName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [validEmail, setValidEmail] = React.useState(true);
   const [password, setPassword] = React.useState('');
+
+  // State values to handle errors
   const [validPassword, setValidPassword] = React.useState(true);
   const [accountCreated, setAccountCreated] = React.useState(false);
   const [signupError, setSignupError] = React.useState(false);
@@ -56,7 +58,6 @@ export default function SignUp({navigation}) {
     }
   }, [accountCreated, signupError]);
 
-  // TODO: Styles
   const styles = StyleSheet.create({
     container: {
       padding: 50,
