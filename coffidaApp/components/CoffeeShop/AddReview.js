@@ -70,6 +70,7 @@ export default function AddReview({route}) {
     // Check that there is enough written in review body before submitting
     if (review.length < 4) {
       setValidReview(false);
+      setIsLoading(false);
       return;
     }
 
@@ -77,6 +78,7 @@ export default function AddReview({route}) {
     const checkIfProfanity = profanityFilter(review);
     if (checkIfProfanity) {
       setIsProfanity(true);
+      setIsLoading(false);
       return;
     }
 

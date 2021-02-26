@@ -100,6 +100,11 @@ export default function SignUp({navigation}) {
           accessibilityRole="button"
           mode="contained"
           onPress={() => {
+            setFirstName('');
+            setLastName('');
+            setEmail('');
+            setPassword('');
+            setAccountCreated(false);
             navigation.navigate('Log In');
           }}>
           Login
@@ -122,6 +127,11 @@ export default function SignUp({navigation}) {
             accessibilityRole="button"
             mode="contained"
             onPress={() => {
+              setFirstName('');
+              setLastName('');
+              setEmail('');
+              setPassword('');
+              setAccountCreated(false);
               navigation.navigate('Log In');
             }}>
             Login

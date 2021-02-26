@@ -39,7 +39,7 @@ const MyTheme = {
 const App = () => (
   <PaperProvider theme={theme}>
     <NavigationContainer theme={MyTheme}>
-      <Stack.Navigator initialRouteName="Main">
+      <Stack.Navigator initialRouteName="Sign Up">
         <Stack.Screen
           name="Sign Up"
           component={SignUp}
