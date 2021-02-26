@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, StyleSheet, Keyboard, Image} from 'react-native';
+import {
+  View,
+  ScrollView,
+  Text,
+  StyleSheet,
+  Keyboard,
+  Image,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import RNFS from 'react-native-fs';
 import {Headline, TextInput, IconButton, HelperText} from 'react-native-paper';
@@ -14,23 +21,25 @@ import DeleteButton from '../Global/DeleteButton';
 
 const styles = StyleSheet.create({
   root: {
-    padding: 50,
+    marginHorizontal: 30,
+    marginTop: 30,
   },
   rating: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginVertical: 5,
   },
-  image: {
-    width: 100,
-    height: 100,
+  starDelete: {
+    flexDirection: 'row',
   },
   buttonGroup: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     marginVertical: 20,
   },
+  image: {marginVertical: 20, width: 300, height: 400},
+  imagePreview: {flexDirection: 'column', alignItems: 'center'},
 });
 
 export default function AddReview({route}) {
@@ -150,50 +159,50 @@ export default function AddReview({route}) {
     setIsLoading(false);
   };
 
+  const DisplayRating = ({title, starHandler, starRating, starSetter}) => (
+    <View style={styles.rating}>
+      <View>
+        <Text>{title}</Text>
+      </View>
+      <View style={styles.starDelete}>
+        <Star handler={starHandler} rating={starRating} />
+        <IconButton
+          icon="close-circle"
+          size={20}
+          onPress={() => starSetter(0)}
+        />
+      </View>
+    </View>
+  );
+
   return (
-    <>
-      <View style={styles.root}>
+    <ScrollView>
+      <View style={[styles.root]}>
         <Headline>Add Review</Headline>
-
-        <View style={styles.rating}>
-          <Text>Overall: </Text>
-          <Star handler={handleOverall} rating={overall} />
-          <IconButton
-            icon="close-circle"
-            size={20}
-            onPress={() => setOverall(0)}
-          />
-        </View>
-
-        <View style={styles.rating}>
-          <Text>Price: </Text>
-          <Star handler={handlePrice} rating={price} />
-          <IconButton
-            icon="close-circle"
-            size={20}
-            onPress={() => setPrice(0)}
-          />
-        </View>
-
-        <View style={styles.rating}>
-          <Text>Quality: </Text>
-          <Star handler={handleQuality} rating={quality} />
-          <IconButton
-            icon="close-circle"
-            size={20}
-            onPress={() => setQuality(0)}
-          />
-        </View>
-
-        <View style={styles.rating}>
-          <Text>Cleanliness: </Text>
-          <Star handler={handleClean} rating={clean} />
-          <IconButton
-            icon="close-circle"
-            size={20}
-            onPress={() => setClean(0)}
-          />
-        </View>
+        <DisplayRating
+          title="Overall: "
+          starHandler={handleOverall}
+          starRating={overall}
+          starSetter={setOverall}
+        />
+        <DisplayRating
+          title="Price: "
+          starHandler={handlePrice}
+          starRating={price}
+          starSetter={setPrice}
+        />
+        <DisplayRating
+          title="Quality: "
+          starHandler={handleQuality}
+          starRating={quality}
+          starSetter={setQuality}
+        />
+        <DisplayRating
+          title="Cleanliness: "
+          starHandler={handleClean}
+          starRating={clean}
+          starSetter={setClean}
+        />
 
         <TextInput
           mode="outlined"
@@ -221,15 +230,22 @@ export default function AddReview({route}) {
         ) : null}
 
         {photoData && !isPhotoDeleted ? (
-          <View>
+          <View style={styles.imagePreview}>
             <Image
               accessibilityLabel="Image to be added to this review"
               source={{
                 uri: photoData?.uri,
               }}
-              style={styles.image}
+              style={[styles.image]}
             />
-            <DeleteButton handler={() => deletePhotoFile()} size={20} />
+            <Button
+              icon="delete"
+              accessibilityLabel="Delete photo"
+              accessibilityHint="Remove the photo that has been taken for this review"
+              accessibilityRole="button"
+              text="Delete Photo"
+              handler={deletePhotoFile}
+            />
           </View>
         ) : null}
         <View style={styles.buttonGroup}>
@@ -251,6 +267,6 @@ export default function AddReview({route}) {
           />
         </View>
       </View>
-    </>
+    </ScrollView>
   );
 }

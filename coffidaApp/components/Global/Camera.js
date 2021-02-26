@@ -1,12 +1,17 @@
 import React, {Component} from 'react';
 import {StyleSheet, View} from 'react-native';
-import {Button} from 'react-native-paper';
+import {Button, IconButton} from 'react-native-paper';
 import {RNCamera} from 'react-native-camera';
 import showToast from '../../functions/showToast';
 
 const styles = StyleSheet.create({
   container: {flex: 1, flexDirection: 'column'},
-  preview: {flex: 1, justifyContent: 'flex-end', alignItems: 'center'},
+  preview: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    margin: 30,
+  },
   capture: {
     flex: 0,
     borderRadius: 5,
@@ -38,15 +43,14 @@ class Camera extends Component {
           captureAudio={false}
         />
         <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center'}}>
-          <Button
+          <IconButton
             icon="camera"
-            mode="contained"
+            size={50}
             accessibilityLabel="Capture Photo"
             accessibilityHint="Take the photo in the frame to use in your review"
             accessibilityRole="button"
-            onPress={this.takePicture.bind(this)}>
-            Capture
-          </Button>
+            onPress={this.takePicture.bind(this)}
+          />
         </View>
       </View>
     );
