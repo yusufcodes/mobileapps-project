@@ -18,9 +18,11 @@ npx react-native run-android
 ### Assignment download
 
 This is in case the word doc on Moodle causes issues
+Main link – use this one first:
+https://stummuac-my.sharepoint.com/:u:/g/personal/17031422_stu_mmu_ac_uk/Eb0c9JVqApFBg9QbuDY8w4UBIfuyokpK4OyVATb8P-v72Q?e=Jkgm97
 
-https://stummuac-my.sharepoint.com/:u:/g/personal/17031422_stu_mmu_ac_uk/EYPbLbEKsC9DqdsSg6p8T0EBhqNd8wsMNzLmzqIY07eXXw?e=k4dO9H![image](https://user-images.githubusercontent.com/40564761/109351786-c19f1d00-7871-11eb-8c26-1f96abf49d97.png)
-
+Backup link – use if first causes issues:
+https://stummuac-my.sharepoint.com/:u:/g/personal/17031422_stu_mmu_ac_uk/EYPbLbEKsC9DqdsSg6p8T0EBhqNd8wsMNzLmzqIY07eXXw?e=k4dO9H
 
 ### README from Project in case Word causes issues
 
