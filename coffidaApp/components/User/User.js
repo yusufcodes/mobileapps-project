@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, ScrollView} from 'react-native';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {
+  Headline,
   Title,
   Paragraph,
   List,
@@ -15,18 +16,7 @@ import Review from '../CoffeeShop/Review';
 import logout from '../../functions/network/logout';
 import showToast from '../../functions/showToast';
 import Loader from '../Global/Loader';
-
-const styles = StyleSheet.create({
-  root: {
-    padding: 30,
-  },
-  heading: {
-    textAlign: 'center',
-  },
-  singleDetail: {
-    flexDirection: 'row',
-  },
-});
+import commonStyles from '../../styles/commonStyles';
 
 // TODO: Use loading boolean for everything, not just user
 export default function User({navigation}) {
@@ -77,6 +67,42 @@ export default function User({navigation}) {
     }
   }, [loggedOut, errorLogOut]);
 
+  // TODO: Remove when finised styling
+  // useEffect(() => {
+  //   (async function () {
+  //     setLoadingDetails(true);
+  //     const response = await performGetUser();
+
+  //     if (!response) {
+  //       return;
+  //     }
+
+  //     const {
+  //       email,
+  //       first_name,
+  //       last_name,
+  //       favourite_locations,
+  //       liked_reviews,
+  //       reviews,
+  //     } = response?.data;
+  //     setDetails({
+  //       email,
+  //       firstName: first_name,
+  //       lastName: last_name,
+  //     });
+  //     setLoadingDetails(false);
+  //     if (favourite_locations.length > 0) {
+  //       setLocations(favourite_locations);
+  //     }
+  //     if (reviews.length > 0) {
+  //       setReviews(reviews);
+  //     }
+  //     if (liked_reviews.length > 0) {
+  //       setLikedReviews(liked_reviews);
+  //     }
+  //   })();
+  // }, []);
+
   useFocusEffect(
     React.useCallback(() => {
       (async function () {
@@ -116,152 +142,181 @@ export default function User({navigation}) {
     setReviews(reviews);
   };
 
+  const styles = StyleSheet.create({
+    root: {
+      // padding: 30,
+    },
+    heading: {},
+    singleDetail: {
+      flexDirection: 'row',
+    },
+  });
+
+  const noLikedLocations = () => {
+    if (loadingDetails) {
+      return <Loader size="small" />;
+    }
+    return <Paragraph>You haven't liked any locations</Paragraph>;
+  };
+  const noReviews = () => {
+    if (loadingDetails) {
+      return <Loader size="small" />;
+    }
+    return <Paragraph>You haven't posted any reviews yet</Paragraph>;
+  };
+  const noFavourites = () => {
+    if (loadingDetails) {
+      return <Loader size="small" />;
+    }
+    return <Paragraph>You haven't favourited any reviews yet</Paragraph>;
+  };
+
   return (
-    <ScrollView style={styles.root}>
-      <Portal>
-        <Dialog visible={visible} onDismiss={hideLogoutDialog}>
-          <Dialog.Title>Are you sure you want to log out?</Dialog.Title>
-          <Dialog.Actions>
-            <DialogButton onPress={() => hideLogoutDialog()}>
-              Cancel
-            </DialogButton>
-            <DialogButton
-              onPress={() => {
-                setLoggedOut(false);
-                setErrorLogOut(false);
-                logout(setLoggedOut, setErrorLogOut);
-              }}>
-              Yes
-            </DialogButton>
-          </Dialog.Actions>
-        </Dialog>
-      </Portal>
-      <Title style={styles.heading}>My Profile</Title>
-      <View style={styles.details}>
-        <Title>Personal Details</Title>
-        {details && !loadingDetails ? (
-          <>
-            <View style={styles.singleDetail}>
-              <Paragraph style={{fontWeight: 'bold'}}>First Name: </Paragraph>
-              <Paragraph>{details?.firstName}</Paragraph>
-            </View>
-            <View style={styles.singleDetail}>
-              <Paragraph style={{fontWeight: 'bold'}}>Last Name: </Paragraph>
-              <Paragraph>{details?.lastName}</Paragraph>
-            </View>
-            <View style={styles.singleDetail}>
-              <Paragraph style={{fontWeight: 'bold'}}>Email: </Paragraph>
-              <Paragraph>{details?.email}</Paragraph>
-            </View>
-          </>
-        ) : (
-          <Loader size="small" />
-        )}
-      </View>
-      <Button
-        accessibilityLabel="Update user details"
-        accessibilityHint="Navigate to the screen where you can enter any details you want to update"
-        accessibilityRole="button"
-        text="Update Details"
-        handler={displayUpdate}
-      />
-      <Button
-        accessibilityLabel="Logout"
-        accessibilityHint="Display a dialog which will prompt whether you would like to log out of your account"
-        accessibilityRole="button"
-        text="Logout"
-        handler={showLogoutDialog}
-      />
-      <Title>My Liked Locations</Title>
-      {locations && !loadingDetails ? (
-        locations.map((item, index) => (
-          <List.Item
-            key={index}
-            title={`${item?.location_name}`}
-            description={`Town: ${item?.location_town} \nRating: ${item?.avg_overall_rating}`}
-            descriptionNumberOfLines={2}
-            left={(props) => <List.Icon {...props} icon="coffee" />}
-            onPress={() => navigation.navigate('Shop', {id: item?.location_id})}
+    <ScrollView>
+      <View style={commonStyles.scrollViewMargin}>
+        <Portal>
+          <Dialog visible={visible} onDismiss={hideLogoutDialog}>
+            <Dialog.Title>Are you sure you want to log out?</Dialog.Title>
+            <Dialog.Actions>
+              <DialogButton onPress={() => hideLogoutDialog()}>
+                Cancel
+              </DialogButton>
+              <DialogButton
+                onPress={() => {
+                  setLoggedOut(false);
+                  setErrorLogOut(false);
+                  logout(setLoggedOut, setErrorLogOut);
+                }}>
+                Yes
+              </DialogButton>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+        <Headline style={styles.heading}>My Profile</Headline>
+        <View style={styles.details}>
+          <Title>Personal Details</Title>
+          {details && !loadingDetails ? (
+            <>
+              <View style={styles.singleDetail}>
+                <Paragraph style={{fontWeight: 'bold'}}>First Name: </Paragraph>
+                <Paragraph>{details?.firstName}</Paragraph>
+              </View>
+              <View style={styles.singleDetail}>
+                <Paragraph style={{fontWeight: 'bold'}}>Last Name: </Paragraph>
+                <Paragraph>{details?.lastName}</Paragraph>
+              </View>
+              <View style={styles.singleDetail}>
+                <Paragraph style={{fontWeight: 'bold'}}>Email: </Paragraph>
+                <Paragraph>{details?.email}</Paragraph>
+              </View>
+            </>
+          ) : (
+            <Loader size="small" />
+          )}
+        </View>
+        <View style={commonStyles.buttonGroup}>
+          <Button
+            accessibilityLabel="Update user details"
+            accessibilityHint="Navigate to the screen where you can enter any details you want to update"
+            accessibilityRole="button"
+            text="Update Details"
+            handler={displayUpdate}
           />
-        ))
-      ) : (
-        <Loader size="small" />
-      )}
-
-      <Title>My Reviews</Title>
-      {reviews && !loadingDetails ? (
-        reviews.map(
-          (
-            {
-              review: {
-                review_id,
-                review_body,
-                overall_rating,
-                price_rating,
-                quality_rating,
-                clenliness_rating,
-                likes,
-              },
-              location: {location_id},
-            },
-            index,
-          ) => (
-            <View key={index}>
-              <Review
-                details={{
-                  location_id,
-                  review_id,
-                  review_body,
-                  overall_rating,
-                  price_rating,
-                  quality_rating,
-                  clenliness_rating,
-                  likes,
-                }}
-                editable
-                navigation={navigation}
-                refreshReviews={refreshReviews}
+          <Button
+            accessibilityLabel="Logout"
+            accessibilityHint="Display a dialog which will prompt whether you would like to log out of your account"
+            accessibilityRole="button"
+            text="Logout"
+            handler={showLogoutDialog}
+          />
+        </View>
+        <Title>My Liked Locations</Title>
+        {locations
+          ? locations.map((item, index) => (
+              <List.Item
+                key={index}
+                title={`${item?.location_name}`}
+                description={`Town: ${item?.location_town} \nRating: ${item?.avg_overall_rating}`}
+                descriptionNumberOfLines={2}
+                left={(props) => <List.Icon {...props} icon="coffee" />}
+                onPress={() =>
+                  navigation.navigate('Shop', {id: item?.location_id})
+                }
               />
-            </View>
-          ),
-        )
-      ) : (
-        <Loader size="small" />
-      )}
+            ))
+          : noLikedLocations()}
 
-      <Title>My Liked Reviews</Title>
-      {likedReviews && !loadingDetails ? (
-        likedReviews.map(
-          (
-            {
-              review: {
-                review_body,
-                overall_rating,
-                price_rating,
-                quality_rating,
-                clenliness_rating,
-                likes,
-              },
-            },
-            index,
-          ) => (
-            <View key={index}>
-              <Review
-                details={{
-                  review_body,
-                  overall_rating,
-                  price_rating,
-                  quality_rating,
-                  clenliness_rating,
-                  likes,
-                }}
-              />
-            </View>
-          ),
-        )
-      ) : (
-        <Loader size="small" />
-      )}
+        <Title>My Reviews</Title>
+        {reviews
+          ? reviews.map(
+              (
+                {
+                  review: {
+                    review_id,
+                    review_body,
+                    overall_rating,
+                    price_rating,
+                    quality_rating,
+                    clenliness_rating,
+                    likes,
+                  },
+                  location: {location_id},
+                },
+                index,
+              ) => (
+                <View key={index}>
+                  <Review
+                    details={{
+                      location_id,
+                      review_id,
+                      review_body,
+                      overall_rating,
+                      price_rating,
+                      quality_rating,
+                      clenliness_rating,
+                      likes,
+                    }}
+                    editable
+                    navigation={navigation}
+                    refreshReviews={refreshReviews}
+                  />
+                </View>
+              ),
+            )
+          : noReviews()}
+
+        <Title>My Liked Reviews</Title>
+        {likedReviews
+          ? likedReviews.map(
+              (
+                {
+                  review: {
+                    review_body,
+                    overall_rating,
+                    price_rating,
+                    quality_rating,
+                    clenliness_rating,
+                    likes,
+                  },
+                },
+                index,
+              ) => (
+                <View key={index}>
+                  <Review
+                    details={{
+                      review_body,
+                      overall_rating,
+                      price_rating,
+                      quality_rating,
+                      clenliness_rating,
+                      likes,
+                    }}
+                  />
+                </View>
+              ),
+            )
+          : noFavourites()}
+      </View>
     </ScrollView>
   );
 }

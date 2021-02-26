@@ -34,12 +34,9 @@ export default function Review({
   const [serverPhoto, setServerPhoto] = useState(null);
 
   const getReviewPhoto = async () => {
-    console.log(location_id);
-    console.log(review_id);
     if (location_id && review_id) {
       const getPhoto = await getPhotoReview(location_id, review_id);
       if (getPhoto?.status === 200) {
-        console.log('Photo found!!!!');
         setServerPhoto(getPhoto.data);
       }
     }
@@ -147,7 +144,6 @@ export default function Review({
   const deletePhotoFile = () => RNFS.unlink(serverPhoto?.uri);
 
   const handleDeletePhoto = async () => {
-    console.log(serverPhoto);
     hideDialogPhoto();
     console.log('deleting photo...');
     const deletePhoto = true;

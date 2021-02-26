@@ -19,6 +19,15 @@ const commonStyles = StyleSheet.create({
   buttonSpacing: {
     marginVertical: 10,
   },
+  buttonGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginVertical: 20,
+  },
+  scrollViewMargin: {
+    marginHorizontal: 30,
+    marginTop: 30,
+  },
 });
 
 export default commonStyles;

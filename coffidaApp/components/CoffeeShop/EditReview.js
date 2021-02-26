@@ -9,6 +9,7 @@ import photoReview from '../../functions/network/photoReview';
 import profanityFilter from '../../functions/profanityFilter';
 import updateReview from '../../functions/network/updateReview';
 import DeleteButton from '../Global/DeleteButton';
+import commonStyles from '../../styles/commonStyles';
 
 const styles = StyleSheet.create({
   root: {
@@ -22,10 +23,6 @@ const styles = StyleSheet.create({
   image: {
     width: 100,
     height: 100,
-  },
-  buttonGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
   },
 });
 
@@ -228,7 +225,7 @@ export default function EditReview({route, navigation}) {
           <DeleteButton handler={() => deletePhotoFile()} size={20} />
         </View>
       ) : null}
-      <View style={styles.buttonGroup}>
+      <View style={commonStyles.buttonGroup}>
         <Button
           icon="camera"
           accessibilityLabel="Open Camera"

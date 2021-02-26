@@ -17,13 +17,9 @@ import getUser from '../../functions/network/getUser';
 import photoReview from '../../functions/network/photoReview';
 import addReview from '../../functions/network/addReview';
 import profanityFilter from '../../functions/profanityFilter';
-import DeleteButton from '../Global/DeleteButton';
+import commonStyles from '../../styles/commonStyles';
 
 const styles = StyleSheet.create({
-  root: {
-    marginHorizontal: 30,
-    marginTop: 30,
-  },
   rating: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -32,11 +28,6 @@ const styles = StyleSheet.create({
   },
   starDelete: {
     flexDirection: 'row',
-  },
-  buttonGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginVertical: 20,
   },
   image: {marginVertical: 20, width: 300, height: 400},
   imagePreview: {flexDirection: 'column', alignItems: 'center'},
@@ -177,7 +168,7 @@ export default function AddReview({route}) {
 
   return (
     <ScrollView>
-      <View style={[styles.root]}>
+      <View style={[commonStyles.scrollViewMargin]}>
         <Headline>Add Review</Headline>
         <DisplayRating
           title="Overall: "
@@ -248,7 +239,7 @@ export default function AddReview({route}) {
             />
           </View>
         ) : null}
-        <View style={styles.buttonGroup}>
+        <View style={commonStyles.buttonGroup}>
           <Button
             icon="camera"
             accessibilityLabel="Open Camera"

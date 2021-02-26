@@ -61,19 +61,33 @@ export default function Heading({details, navigation, id}) {
     },
   });
 
+  const performFavourite = async (location_id, unfav = false) => {
+    const response = await favouriteLocation(location_id, unfav);
+    if (!response || response.status !== 200) {
+      showToast('Coffee shop could not be liked/unliked. Please try again.');
+      return;
+    }
+    showToast(`Location has been ${unfav ? 'unliked' : 'liked'}`);
+  };
+
   const handleFavourite = async () => {
     console.log('Running handleFavourite...');
 
     // get user info
     const userDetails = await getUser();
+    if (!userDetails) {
+      showToast('Coffee shop could not be liked/unliked. Please try again.');
+      return;
+    }
 
     // Retrieve list of favourited locations
     const {favourite_locations} = userDetails.data;
 
+    // *** TODO: New method for performing like, same as Review format.
+
     // Empty favourite locations: can add location to favourites without checking
     if (favourite_locations.length === 0) {
-      await favouriteLocation(id);
-      showToast('Success: location has been favourited');
+      await performFavourite(id);
     } else {
       // Check if location to be liked has already been liked, determine like or unlike action
       const location = favourite_locations.find(
@@ -83,12 +97,10 @@ export default function Heading({details, navigation, id}) {
       // Unlike the location (removed from favourite_locations)
       if (location) {
         const unfav = true;
-        await favouriteLocation(id, unfav);
-        showToast('Success: location has been unfavourited');
+        await performFavourite(id, unfav);
       } else {
         // Like the location (add to favourite_locations)
-        await favouriteLocation(id);
-        showToast('Success: location has been favourited');
+        await performFavourite(id);
       }
     }
   };
