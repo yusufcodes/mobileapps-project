@@ -181,10 +181,10 @@ export default function Review({
       alignItems: 'center',
     },
     image: {
-      width: 100,
-      height: 100,
-      borderColor: 'red',
-      borderWidth: 1,
+      width: 150,
+      height: 150,
+      marginLeft: 10,
+      marginBottom: 10,
     },
     starDetails: {
       flexDirection: 'row',
