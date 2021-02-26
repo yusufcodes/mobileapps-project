@@ -50,6 +50,7 @@ export default function Login({navigation}) {
     Keyboard.dismiss();
     setLoginError(false);
     setInvalidLogin(false);
+    setLoggedIn(false); // TODO: See if this works for logout
     await login(email, password, setLoggedIn, setLoginError, setInvalidLogin);
   };
 
