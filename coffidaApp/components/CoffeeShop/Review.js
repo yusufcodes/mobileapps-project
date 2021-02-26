@@ -22,6 +22,7 @@ export default function Review({
 }) {
   const {
     location_id,
+    location_name,
     review_id,
     review_body,
     overall_rating,
@@ -119,6 +120,7 @@ export default function Review({
     console.log(location_id);
     navigation.navigate('EditReview', {
       location_id,
+      location_name,
       review_id,
       review_body,
       overall_rating,

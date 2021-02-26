@@ -1,24 +1,18 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, Keyboard, Image} from 'react-native';
-import {Headline, TextInput, IconButton, HelperText} from 'react-native-paper';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, Keyboard, Image} from 'react-native';
+import {Headline, TextInput, HelperText} from 'react-native-paper';
 import RNFS from 'react-native-fs';
-import Star from '../Global/Star';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import photoReview from '../../functions/network/photoReview';
 import profanityFilter from '../../functions/profanityFilter';
 import updateReview from '../../functions/network/updateReview';
-import DeleteButton from '../Global/DeleteButton';
 import commonStyles from '../../styles/commonStyles';
+import DisplayRating from '../Global/DisplayRating';
 
 const styles = StyleSheet.create({
   root: {
-    padding: 50,
-  },
-  rating: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 30,
   },
   image: {
     width: 100,
@@ -27,9 +21,9 @@ const styles = StyleSheet.create({
 });
 
 export default function EditReview({route, navigation}) {
-  // TODO: Pass in name of the location
   const {
     location_id,
+    location_name,
     review_id,
     review_body,
     overall_rating,
@@ -39,11 +33,11 @@ export default function EditReview({route, navigation}) {
     serverPhoto,
   } = route.params;
 
-  // TODO: Pass in name here
-  // useEffect(() => {
-  //   navigation.setOptions({title: `Add Review: ${name}`});
-  // }, [name]);
+  useEffect(() => {
+    navigation.setOptions({title: `Edit Review: ${location_name}`});
+  }, [location_name]);
 
+  // State for fields needed to edit a review.
   const [overall, setOverall] = useState(overall_rating);
   const [price, setPrice] = useState(price_rating);
   const [quality, setQuality] = useState(quality_rating);
@@ -65,11 +59,13 @@ export default function EditReview({route, navigation}) {
   const handleQuality = (rating) => setQuality(rating);
   const handleClean = (rating) => setClean(rating);
 
+  // Open the camera for user to add or retake a photo for the review
   const handlePhoto = () => {
     setIsPhotoDeleted(false);
     navigation.navigate('UploadPhoto', {setPhotoData});
   };
 
+  // Remove photo from local storage
   const deletePhotoFile = () => {
     RNFS.unlink(photoData?.uri);
     setPhotoData(null);
@@ -96,10 +92,10 @@ export default function EditReview({route, navigation}) {
     if (checkIfProfanity) {
       setIsProfanity(true);
       setIsLoading(false);
-
       return;
     }
 
+    // Construct data for PATCH depending on which values are altered
     const data = {};
 
     if (overall !== overall_rating) {
@@ -118,15 +114,11 @@ export default function EditReview({route, navigation}) {
       data.review_body = review;
     }
 
-    console.log('EditReview: Data being sent in PATCH: ');
-    console.log(data);
-
     const response = await updateReview(location_id, review_id, data);
 
     if (response?.status === 200) {
       showToast('Review edited!');
-      console.log('Review edited!');
-      // Only runs if a photo has been taken.
+      // Perform logic to add photo that is taken to the review, only if a photo is taken
       if (photoData) {
         const uploadPhoto = await photoReview(
           location_id,
@@ -135,21 +127,17 @@ export default function EditReview({route, navigation}) {
         );
         if (uploadPhoto.status === 200) {
           showToast('Photo successfully added to review');
-          console.log('EditReview: Photo successfully added to review');
         } else {
           showToast(
             "Sorry, we couldn't upload your photo to the review. Please try again!",
           );
           return;
         }
-        console.log(
-          'EditReview: Review added with photo: navigating back now...',
-        );
       }
       setIsLoading(false);
       navigation.goBack();
     } else {
-      showToast('Error editing review, please try again.');
+      showToast("Sorry, we couldn't edit your review. please try again.");
       setIsLoading(false);
     }
   };
@@ -157,43 +145,37 @@ export default function EditReview({route, navigation}) {
     <View style={styles.root}>
       <Headline>Edit Review</Headline>
 
-      <View style={styles.rating}>
-        <Text>Overall: </Text>
-        <Star handler={handleOverall} rating={overall} />
-        <IconButton
-          icon="close-circle"
-          size={20}
-          onPress={() => setOverall(0)}
-        />
-      </View>
-
-      <View style={styles.rating}>
-        <Text>Price: </Text>
-        <Star handler={handlePrice} rating={price} />
-        <IconButton icon="close-circle" size={20} onPress={() => setPrice(0)} />
-      </View>
-
-      <View style={styles.rating}>
-        <Text>Quality: </Text>
-        <Star handler={handleQuality} rating={quality} />
-        <IconButton
-          icon="close-circle"
-          size={20}
-          onPress={() => setQuality(0)}
-        />
-      </View>
-
-      <View style={styles.rating}>
-        <Text>Cleanliness: </Text>
-        <Star handler={handleClean} rating={clean} />
-        <IconButton icon="close-circle" size={20} onPress={() => setClean(0)} />
-      </View>
+      <DisplayRating
+        title="Overall: "
+        starHandler={handleOverall}
+        starRating={overall}
+        starSetter={setOverall}
+      />
+      <DisplayRating
+        title="Price: "
+        starHandler={handlePrice}
+        starRating={price}
+        starSetter={setPrice}
+      />
+      <DisplayRating
+        title="Quality: "
+        starHandler={handleQuality}
+        starRating={quality}
+        starSetter={setQuality}
+      />
+      <DisplayRating
+        title="Cleanliness: "
+        starHandler={handleClean}
+        starRating={clean}
+        starSetter={setClean}
+      />
 
       <TextInput
         label="Review"
         mode="outlined"
         placeholder="Enter your review here..."
         multiline
+        numberOfLines={6}
         dense
         value={review}
         error={!validReview}
@@ -222,7 +204,14 @@ export default function EditReview({route, navigation}) {
             }}
             style={styles.image}
           />
-          <DeleteButton handler={() => deletePhotoFile()} size={20} />
+          <Button
+            icon="delete"
+            accessibilityLabel="Delete photo"
+            accessibilityHint="Remove the photo that has been taken for this review"
+            accessibilityRole="button"
+            text="Delete Photo"
+            handler={deletePhotoFile}
+          />
         </View>
       ) : null}
       <View style={commonStyles.buttonGroup}>
@@ -231,17 +220,13 @@ export default function EditReview({route, navigation}) {
           accessibilityLabel="Open Camera"
           accessibilityHint="Displays screen to allow for you to take a photo for your review"
           accessibilityRole="button"
-          text={
-            photoData && !isPhotoDeleted
-              ? 'Retake Photo'
-              : 'Add Photo To Review'
-          }
+          text={photoData && !isPhotoDeleted ? 'Retake Photo' : 'Add Photo'}
           handler={handlePhoto}
         />
 
         <Button
           text="Submit Review"
-          accessibilityLabel="Submit Review"
+          accessibilityLabel="Submit"
           accessibilityHint="Confirm action to submit your review"
           accessibilityRole="button"
           loading={isLoading}

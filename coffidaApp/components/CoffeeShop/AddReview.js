@@ -1,16 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
-  Keyboard,
-  Image,
-} from 'react-native';
+import {View, ScrollView, StyleSheet, Keyboard, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import RNFS from 'react-native-fs';
-import {Headline, TextInput, IconButton, HelperText} from 'react-native-paper';
-import Star from '../Global/Star';
+import {Headline, TextInput, HelperText} from 'react-native-paper';
 import Button from '../Global/Button';
 import showToast from '../../functions/showToast';
 import getUser from '../../functions/network/getUser';
@@ -18,17 +10,9 @@ import photoReview from '../../functions/network/photoReview';
 import addReview from '../../functions/network/addReview';
 import profanityFilter from '../../functions/profanityFilter';
 import commonStyles from '../../styles/commonStyles';
+import DisplayRating from '../Global/DisplayRating';
 
 const styles = StyleSheet.create({
-  rating: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 5,
-  },
-  starDelete: {
-    flexDirection: 'row',
-  },
   image: {marginVertical: 20, width: 300, height: 400},
   imagePreview: {flexDirection: 'column', alignItems: 'center'},
 });
@@ -62,11 +46,13 @@ export default function AddReview({route}) {
   const handleQuality = (rating) => setQuality(rating);
   const handleClean = (rating) => setClean(rating);
 
+  // Open the camera for user to take a photo for the review
   const handlePhoto = () => {
     setIsPhotoDeleted(false);
     navigation.navigate('UploadPhoto', {setPhotoData});
   };
 
+  // Remove photo from local storage
   const deletePhotoFile = () => {
     RNFS.unlink(photoData?.uri);
     setPhotoData(null);
@@ -107,9 +93,9 @@ export default function AddReview({route}) {
     if (response?.status === 201) {
       showToast('Review submitted!');
 
-      // Only runs if a photo has been taken.
+      // Perform logic to add photo that is taken to the review, only if a photo is taken
       if (photoData) {
-        console.log('AddReview: Photo found, attempting to upload...');
+        // Logic to find the review that was just added
         const userDetails = await getUser();
         // Find the review the user has just uploaded
         const reviewToFind = userDetails.data.reviews.find(
@@ -120,9 +106,6 @@ export default function AddReview({route}) {
             price === item.review.price_rating &&
             quality === item.review.quality_rating,
         );
-
-        console.log(`New Review ID: ${reviewToFind.review.review_id}`);
-        console.log('AddReview: Adding photo taken to the review...');
         const uploadPhoto = await photoReview(
           id,
           reviewToFind.review.review_id,
@@ -130,16 +113,12 @@ export default function AddReview({route}) {
         );
         if (uploadPhoto.status === 200) {
           showToast('Photo successfully added to review');
-          console.log('AddReview: Photo successfully added to review');
         } else {
           showToast(
             "Sorry, we couldn't upload your photo to the review. Please try again!",
           );
           return;
         }
-        console.log(
-          'AddReview: Review added with photo: navigating back now...',
-        );
       }
       setIsLoading(false);
       navigation.goBack();
@@ -149,22 +128,6 @@ export default function AddReview({route}) {
     }
     setIsLoading(false);
   };
-
-  const DisplayRating = ({title, starHandler, starRating, starSetter}) => (
-    <View style={styles.rating}>
-      <View>
-        <Text>{title}</Text>
-      </View>
-      <View style={styles.starDelete}>
-        <Star handler={starHandler} rating={starRating} />
-        <IconButton
-          icon="close-circle"
-          size={20}
-          onPress={() => starSetter(0)}
-        />
-      </View>
-    </View>
-  );
 
   return (
     <ScrollView>

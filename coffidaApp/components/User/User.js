@@ -222,7 +222,7 @@ export default function User({navigation}) {
                     clenliness_rating,
                     likes,
                   },
-                  location: {location_id},
+                  location: {location_id, location_name},
                 },
                 index,
               ) => (
@@ -230,6 +230,7 @@ export default function User({navigation}) {
                   <Review
                     details={{
                       location_id,
+                      location_name,
                       review_id,
                       review_body,
                       overall_rating,
