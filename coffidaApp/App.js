@@ -34,8 +34,8 @@ const MyTheme = {
     ...DefaultTheme.colors,
     primary: '#9B4949',
     background: '#F4F3EF',
-    // card: '#BBA79C',
-    // text: 'blue',
+    card: '#9B4949',
+    text: 'white',
     // border: 'green',
   },
 };
