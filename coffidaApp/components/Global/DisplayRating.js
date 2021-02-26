@@ -29,6 +29,9 @@ export default function DisplayRating({
       <View style={styles.starDelete}>
         <Star handler={starHandler} rating={starRating} />
         <IconButton
+          accessibilityLabel="Reset star value to zero"
+          accessibilityHint="Clear the star selection that is currently present to zero"
+          accessibilityRole="button"
           icon="close-circle"
           size={20}
           onPress={() => starSetter(0)}

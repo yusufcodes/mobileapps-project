@@ -12,7 +12,5 @@ export default async function getPhotoReview(locationId, reviewId) {
     });
 
     return response;
-  } catch (error) {
-    // console.log(`getPhotoReview: ${error}`);
-  }
+  } catch (error) {}
 }

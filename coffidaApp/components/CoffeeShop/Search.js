@@ -93,6 +93,8 @@ export default function Search({
         style={styles.search}
       />
       <IconButton
+        accessibilityHint="Opens dialog to display search filters"
+        accessibilityRole="button"
         icon="format-list-checkbox"
         accessibilityLabel="Display search filters"
         size={30}

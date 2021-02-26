@@ -46,8 +46,6 @@ export default function Review({
         setServerPhoto(getPhoto.data);
         return;
       }
-      // console.log('getReviewPhoto: Photo found');
-      // setServerPhoto(getPhoto.data);
     }
     setServerPhoto(null);
   };

@@ -5,6 +5,9 @@ export default function DeleteButton(props, {...rest}) {
   const {handler, size = 30} = props;
   return (
     <IconButton
+      accessibilityLabel="Perform delete action"
+      accessibilityHint="Will delete the item you are currently viewing and clicking onto"
+      accessibilityRole="button"
       icon="delete"
       size={size}
       style={{

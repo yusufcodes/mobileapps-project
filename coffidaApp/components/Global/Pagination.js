@@ -27,6 +27,9 @@ export default function Pagination({limit, offset, setOffset, numberOfShops}) {
   return (
     <View style={styles.root}>
       <IconButton
+        accessibilityLabel="Go to previous page"
+        accessibilityHint="Switch the paginated results one page back"
+        accessibilityRole="button"
         style={[commonStyles.primaryColor, styles.button]}
         icon="chevron-left"
         size={35}
@@ -43,6 +46,9 @@ export default function Pagination({limit, offset, setOffset, numberOfShops}) {
         Page {currentPage} of {totalPages === 0 ? 1 : totalPages}
       </Paragraph>
       <IconButton
+        accessibilityLabel="Go to next page"
+        accessibilityHint="Switch the paginated results one page forward"
+        accessibilityRole="button"
         style={[commonStyles.primaryColor, styles.button]}
         icon="chevron-right"
         size={35}
